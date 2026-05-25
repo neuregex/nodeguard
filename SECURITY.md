@@ -69,7 +69,7 @@ Once V1.0 ships, support policy will be updated.
 
 - **Zero telemetry by default.** This is non-negotiable.
 - **No phoning home** for any reason except explicit `nodeguard update` invocation (HTTPS to public endpoint, no identifying headers).
-- **Capa 8 LLM analysis is opt-in.** When enabled with cloud provider, only the code of the node being scanned is transmitted — never environment data, never telemetry.
+- **Layer 8 LLM analysis is opt-in.** When enabled with cloud provider, only the code of the node being scanned is transmitted — never environment data, never telemetry.
 
 ## Contact
 
