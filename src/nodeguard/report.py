@@ -198,9 +198,13 @@ def _compute_verdict(findings: list[Finding]) -> Verdict:
 
 
 def _recommendation_for(label: VerdictLabel) -> Literal["install", "review", "do_not_install"]:
-    return {
-        VerdictLabel.CLEAN: "install",
-        VerdictLabel.SUSPICIOUS: "review",
-        VerdictLabel.MALICIOUS: "do_not_install",
-        VerdictLabel.ERROR: "review",
-    }[label]
+    # A match statement keeps pyright happy: each return is a Literal string,
+    # so the inferred return type matches the annotation. A dict-literal lookup
+    # would widen the values to `str` and break the Literal type contract.
+    match label:
+        case VerdictLabel.CLEAN:
+            return "install"
+        case VerdictLabel.MALICIOUS:
+            return "do_not_install"
+        case VerdictLabel.SUSPICIOUS | VerdictLabel.ERROR:
+            return "review"
