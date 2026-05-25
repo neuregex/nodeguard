@@ -1,0 +1,43 @@
+name: "nodeguard scan"
+description: "Scan ComfyUI custom_nodes (and other node-based plugins) for malicious code"
+author: "nodeguard contributors"
+branding:
+  icon: "shield"
+  color: "purple"
+
+inputs:
+  path:
+    description: "Path to scan (file or directory)"
+    required: false
+    default: "custom_nodes/"
+  fail-on:
+    description: "Severity threshold for non-zero exit (none|suspicious|malicious)"
+    required: false
+    default: "suspicious"
+  format:
+    description: "Output format (json|markdown). SARIF planned for v0.5."
+    required: false
+    default: "markdown"
+  python-version:
+    description: "Python version to use"
+    required: false
+    default: "3.11"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install nodeguard
+      shell: bash
+      run: pip install nodeguard
+
+    - name: Run nodeguard scan
+      shell: bash
+      run: |
+        nodeguard scan "${{ inputs.path }}" \
+          --fail-on "${{ inputs.fail-on }}" \
+          --format "${{ inputs.format }}"

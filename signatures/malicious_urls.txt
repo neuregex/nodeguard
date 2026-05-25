@@ -1,0 +1,11 @@
+# nodeguard malicious_urls.txt
+# One URL per line. `#` starts a comment. Blank lines ignored.
+# See signatures/README.md for the format.
+#
+# This file is seeded empty. Updates will pull from:
+#   - URLhaus (abuse.ch)
+#   - ThreatFox (abuse.ch)
+#   - OpenPhish
+#   - Community PR contributions
+#
+# To contribute: open a PR adding URLs with reference to public disclosure.

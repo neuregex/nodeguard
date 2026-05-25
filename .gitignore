@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Virtual envs
+.venv/
+venv/
+env/
+ENV/
+
+# Testing
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Linters / type checkers
+.ruff_cache/
+.mypy_cache/
+.pyright/
+.pyre/
+
+# uv
+uv.lock
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# nodeguard runtime
+nodeguard.sarif
+nodeguard-report.json
+nodeguard-report.html
+.nodeguard-cache/
+
+# Models y firmas descargadas (no commiteamos modelos grandes)
+src/nodeguard/data/models/*.bin
+src/nodeguard/data/models/*.safetensors
+src/nodeguard/data/cache/
+
+# Local secrets
+.env
+.env.local
+*.pem
+*.key

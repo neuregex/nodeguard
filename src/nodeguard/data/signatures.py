@@ -1,0 +1,121 @@
+"""Loader for the bundled signature databases.
+
+Signatures live as plain-text files at the repo root under `signatures/`:
+- `known_malware.jsonl` — one JSON object per line, see schema in
+  `signatures/README.md`.
+- `malicious_urls.txt` — one URL per line, comments (`#`) and blank lines
+  allowed.
+
+The loader is intentionally simple and dependency-free. Resolving the
+signatures directory uses an env var (`NODEGUARD_SIGNATURES_DIR`) when set,
+falling back to the bundled location.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+from dataclasses import dataclass, field
+from pathlib import Path
+
+
+@dataclass
+class HashSignature:
+    """A single hash-based signature entry."""
+
+    id: str
+    name: str
+    type: str  # "exact_hash" | "fuzzy_hash" | etc.
+    value: str
+    category: list[str] = field(default_factory=list)
+    severity: str = "high"
+    first_seen: str | None = None
+    references: list[str] = field(default_factory=list)
+    similar_to: str | None = None
+
+
+def _signatures_dir() -> Path:
+    """Resolve where signature files live.
+
+    Order of precedence:
+    1. NODEGUARD_SIGNATURES_DIR env var (used by tests).
+    2. Bundled location relative to repo root.
+    """
+    if env := os.environ.get("NODEGUARD_SIGNATURES_DIR"):
+        return Path(env)
+
+    # Walk up from this file to find a sibling `signatures/` directory
+    here = Path(__file__).resolve()
+    for parent in [here.parent, *here.parents]:
+        candidate = parent / "signatures"
+        if candidate.is_dir():
+            return candidate
+
+    # Fallback (e.g., installed wheel without bundled data)
+    return Path.cwd() / "signatures"
+
+
+def load_hash_signatures(path: Path | None = None) -> list[HashSignature]:
+    """Load hash signatures from a JSONL file.
+
+    Args:
+        path: Optional explicit path. Defaults to bundled `known_malware.jsonl`.
+
+    Returns:
+        List of HashSignature, only those with `type` starting with "hash".
+    """
+    if path is None:
+        path = _signatures_dir() / "known_malware.jsonl"
+
+    signatures: list[HashSignature] = []
+    if not path.exists():
+        return signatures
+
+    with path.open(encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("//"):
+                continue
+            try:
+                data = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+
+            if data.get("type") in {"exact_hash", "fuzzy_hash"}:
+                signatures.append(
+                    HashSignature(
+                        id=data["id"],
+                        name=data.get("name", ""),
+                        type=data["type"],
+                        value=data["value"],
+                        category=data.get("category", []),
+                        severity=data.get("severity", "high"),
+                        first_seen=data.get("first_seen"),
+                        references=data.get("references", []),
+                        similar_to=data.get("similar_to"),
+                    )
+                )
+
+    return signatures
+
+
+def load_malicious_urls(path: Path | None = None) -> set[str]:
+    """Load malicious URLs from a plain text file.
+
+    Format: one URL per line. Lines starting with `#` or empty are ignored.
+    """
+    if path is None:
+        path = _signatures_dir() / "malicious_urls.txt"
+
+    urls: set[str] = set()
+    if not path.exists():
+        return urls
+
+    with path.open(encoding="utf-8") as f:
+        for line in f:
+            stripped = line.strip()
+            if not stripped or stripped.startswith("#"):
+                continue
+            urls.add(stripped)
+
+    return urls
