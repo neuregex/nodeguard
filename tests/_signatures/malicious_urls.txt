@@ -1,3 +1,0 @@
-# Test URL list — auto-generated
-https://malicious-test-c2.example.invalid/webhook
-https://discord.com/api/webhooks/000000000000000000/TEST-EXAMPLE

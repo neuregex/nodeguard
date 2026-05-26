@@ -60,3 +60,6 @@ src/nodeguard/data/cache/
 .env.local
 *.pem
 *.key
+
+# Auto-generated test signature DB (populated by conftest.py)
+tests/_signatures/
