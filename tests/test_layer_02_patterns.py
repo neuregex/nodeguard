@@ -6,10 +6,10 @@ from pathlib import Path
 
 import pytest
 
-from nodeguard.data.signatures import PatternCategory, load_pattern_categories
-from nodeguard.layers.base import NodeContext
-from nodeguard.layers.layer_02_patterns import PatternLayer
-from nodeguard.report import Severity
+from nodesafe.data.signatures import PatternCategory, load_pattern_categories
+from nodesafe.layers.base import NodeContext
+from nodesafe.layers.layer_02_patterns import PatternLayer
+from nodesafe.report import Severity
 
 
 @pytest.fixture

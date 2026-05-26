@@ -1,7 +1,7 @@
 """Configuration loader.
 
 Defaults are designed to make the safe choice without configuration.
-Users can override via ~/.config/nodeguard/config.toml or --config <path>.
+Users can override via ~/.config/nodesafe/config.toml or --config <path>.
 """
 
 from __future__ import annotations
@@ -55,7 +55,7 @@ class VulnerabilityDbConfig(BaseModel):
 
 class SemgrepConfig(BaseModel):
     enabled: bool = True
-    ruleset: str = "nodeguard-rules-comfyui"
+    ruleset: str = "nodesafe-rules-comfyui"
 
 
 class TelemetryConfig(BaseModel):
@@ -85,7 +85,7 @@ def default_config_path() -> Path:
         base = Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming"))
     else:
         base = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
-    return base / "nodeguard" / "config.toml"
+    return base / "nodesafe" / "config.toml"
 
 
 def load_config(path: Path | None = None) -> Config:

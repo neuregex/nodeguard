@@ -15,7 +15,7 @@ unreached branches, never executed):
   - `wallet_paths`:     wallet.dat path
 
 If you are reading this in a real custom_node you installed: that node is a
-TEST FIXTURE from the nodeguard repo and should not be in your ComfyUI
+TEST FIXTURE from the nodesafe repo and should not be in your ComfyUI
 installation. Remove it.
 """
 

@@ -1,6 +1,6 @@
 ---
 name: False positive
-about: nodeguard flagged a legitimate node as malicious
+about: nodesafe flagged a legitimate node as malicious
 title: "[false-positive] "
 labels: false-positive
 ---
@@ -9,7 +9,7 @@ labels: false-positive
 
 <!-- Repo URL, package name. Confirm it's well-known/audited if possible. -->
 
-## What nodeguard reported
+## What nodesafe reported
 
 <!-- Paste the relevant findings here. -->
 

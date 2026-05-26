@@ -25,7 +25,7 @@ labels: bug
 
 ## Environment
 
-- nodeguard version: <!-- `nodeguard --version` -->
+- nodesafe version: <!-- `nodesafe --version` -->
 - Python version: <!-- `python --version` -->
 - OS: <!-- Windows 11, Ubuntu 22.04, macOS 14, etc. -->
 - Install method: <!-- pip, uv, from source -->

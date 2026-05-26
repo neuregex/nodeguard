@@ -1,12 +1,12 @@
-# nodeguard
+# nodesafe
 
 > Security scanner for ComfyUI custom nodes — and the emerging standard for node-based workflow plugin security.
 
-[![CI](https://github.com/neuregex/nodeguard/actions/workflows/ci.yml/badge.svg)](https://github.com/neuregex/nodeguard/actions/workflows/ci.yml)
+[![CI](https://github.com/neuregex/nodesafe/actions/workflows/ci.yml/badge.svg)](https://github.com/neuregex/nodesafe/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
-`nodeguard` scans third-party plugins/nodes before you install them in node-based workflow tools, detecting malicious code with a cascading pipeline that combines static analysis, signature matching, machine learning, and optional semantic analysis with an LLM. Starting point: the ComfyUI ecosystem.
+`nodesafe` scans third-party plugins/nodes before you install them in node-based workflow tools, detecting malicious code with a cascading pipeline that combines static analysis, signature matching, machine learning, and optional semantic analysis with an LLM. Starting point: the ComfyUI ecosystem.
 
 > [5-second GIF of the scanner detecting a malicious node — placeholder until v0.1]
 
@@ -14,19 +14,19 @@
 
 In **June 2024**, ComfyUI_LLMVISION stole browser credentials and crypto wallets from hundreds of users. In **April 2026**, a botnet compromised 1,000+ ComfyUI instances by auto-installing malicious nodes via the Manager. The custom_nodes ecosystem is large, fast-moving, and largely unverified.
 
-`nodeguard` scans before you install.
+`nodesafe` scans before you install.
 
 ## Quick start
 
 ```bash
-pip install nodeguard
-nodeguard scan /path/to/custom_node
+pip install nodesafe
+nodesafe scan /path/to/custom_node
 ```
 
 Or directly without installing:
 
 ```bash
-uvx nodeguard scan /path/to/custom_node
+uvx nodesafe scan /path/to/custom_node
 ```
 
 ## How it works
@@ -63,42 +63,42 @@ A 9-layer cascading pipeline. Each layer more expensive than the previous. Most 
 ### Scan a directory
 
 ```bash
-nodeguard scan /path/to/custom_node
+nodesafe scan /path/to/custom_node
 ```
 
 ### JSON output
 
 ```bash
-nodeguard scan /path/to/custom_node --format json
+nodesafe scan /path/to/custom_node --format json
 ```
 
 ### Integrate with GitHub Code Scanning (SARIF)
 
 ```bash
-nodeguard scan custom_nodes/ --format sarif > nodeguard.sarif
+nodesafe scan custom_nodes/ --format sarif > nodesafe.sarif
 ```
 
 ### Only cheap layers (fast, no ML)
 
 ```bash
-nodeguard scan /path/to/custom_node --layers 0,1,2,3
+nodesafe scan /path/to/custom_node --layers 0,1,2,3
 ```
 
 ### Update signatures
 
 ```bash
-nodeguard update
+nodesafe update
 ```
 
 ### Verify installation
 
 ```bash
-nodeguard doctor
+nodesafe doctor
 ```
 
 ## Retrospective analysis
 
-Would nodeguard have detected the historical incidents? We apply the pipeline mentally to each case:
+Would nodesafe have detected the historical incidents? We apply the pipeline mentally to each case:
 
 | Incident | Detection layer | Time | Verdict |
 |----------|-----------------|------|---------|
@@ -110,7 +110,7 @@ Full analysis in [`docs/retrospective-analysis.md`](docs/retrospective-analysis.
 
 ## Honest limitations
 
-`nodeguard` is **static analysis**, not a sandbox. Its limits:
+`nodesafe` is **static analysis**, not a sandbox. Its limits:
 
 - **It does not prevent upstream supply chain attacks** (a legitimate provider being compromised). It detects the malware when it is distributed in nodes, not the original compromise.
 - **It is not a replacement for the Manager** — it is complementary; ideally integrated.
@@ -119,7 +119,7 @@ Full analysis in [`docs/retrospective-analysis.md`](docs/retrospective-analysis.
 
 ## Configuration
 
-`~/.config/nodeguard/config.toml` (optional — sane defaults):
+`~/.config/nodesafe/config.toml` (optional — sane defaults):
 
 ```toml
 [scanner]
@@ -144,7 +144,7 @@ enabled = false                     # ALWAYS false. Immutable policy.
 - **v0.5 (M2):** Layer 5 ML + Semgrep + OSV integration + first public wave
 - **v1.0 (M3):** Layers 6-7 + PR to ComfyUI-Manager + formal launch
 - **v1.5 (M4):** Layer 8 LLM + public report + consolidated community
-- **v2+ (Year 2):** `.nodeguard` standard portable to other node-based ecosystems
+- **v2+ (Year 2):** `.nodesafe` standard portable to other node-based ecosystems
 
 Full plan in [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
@@ -168,6 +168,6 @@ Apache 2.0. See [LICENSE](LICENSE).
 
 ## Long-term vision
 
-ComfyUI is the most urgent case, not the only one. The full category of node-based tools with executable plugins (LangFlow, Flowise, Node-RED, n8n, etc.) shares the same structural problem. In the long term, `.nodeguard` aspires to become a **portable manifest artifact** that any ecosystem can adopt — analogous to how `.safetensors` became the standard for ML model weights.
+ComfyUI is the most urgent case, not the only one. The full category of node-based tools with executable plugins (LangFlow, Flowise, Node-RED, n8n, etc.) shares the same structural problem. In the long term, `.nodesafe` aspires to become a **portable manifest artifact** that any ecosystem can adopt — analogous to how `.safetensors` became the standard for ML model weights.
 
 V2-V3 of the project formalizes the standard and works with maintainers of other ecosystems. Today, brutal focus on ComfyUI.

@@ -37,8 +37,8 @@ import time
 from pathlib import Path
 from typing import ClassVar
 
-from nodeguard.layers.base import Layer, LayerResult, NodeContext
-from nodeguard.report import Finding, Severity
+from nodesafe.layers.base import Layer, LayerResult, NodeContext
+from nodesafe.report import Finding, Severity
 
 
 class AstLayer(Layer):

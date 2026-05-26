@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from nodeguard.layers.base import NodeContext
-from nodeguard.layers.layer_00_hash import HashLayer
-from nodeguard.report import Severity
+from nodesafe.layers.base import NodeContext
+from nodesafe.layers.layer_00_hash import HashLayer
+from nodesafe.report import Severity
 
 
 def test_benign_fixture_produces_no_findings(benign_fixture: Path) -> None:

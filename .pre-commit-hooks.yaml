@@ -1,16 +1,16 @@
-# pre-commit hooks for nodeguard.
+# pre-commit hooks for nodesafe.
 # Add to your repo's .pre-commit-config.yaml:
 #
 #   repos:
-#     - repo: https://github.com/neuregex/nodeguard
+#     - repo: https://github.com/neuregex/nodesafe
 #       rev: v0.1.0
 #       hooks:
-#         - id: nodeguard
+#         - id: nodesafe
 
-- id: nodeguard
-  name: nodeguard scan
+- id: nodesafe
+  name: nodesafe scan
   description: Scan custom_nodes for malicious code
-  entry: nodeguard scan
+  entry: nodesafe scan
   language: python
   files: 'custom_nodes/.*\.(py|toml|txt)$'
   pass_filenames: false

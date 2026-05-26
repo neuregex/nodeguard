@@ -24,7 +24,7 @@ Design notes:
 - `rapidfuzz` is the matcher. Cheap, C-accelerated Levenshtein. We fall
   back to a pure-Python implementation if `rapidfuzz` isn't installed so
   the layer remains importable.
-- OSV queries are off by default to keep `nodeguard scan` hermetic.
+- OSV queries are off by default to keep `nodesafe scan` hermetic.
   Enable with `vulnerability_db.primary = "osv"` *and* an explicit flag
   through `TyposquattingLayer(osv_enabled=True)` (set by the Scanner once
   we wire the config through). We never block on network — failures are
@@ -48,9 +48,9 @@ if sys.version_info >= (3, 11):
 else:  # pragma: no cover - exercised only on 3.10
     import tomli as tomllib  # type: ignore[no-redef]
 
-from nodeguard.data.signatures import load_top_pypi_packages
-from nodeguard.layers.base import Layer, LayerResult, NodeContext
-from nodeguard.report import Finding, Severity
+from nodesafe.data.signatures import load_top_pypi_packages
+from nodesafe.layers.base import Layer, LayerResult, NodeContext
+from nodesafe.report import Finding, Severity
 
 try:
     from rapidfuzz.distance import Levenshtein as _RapidLevenshtein

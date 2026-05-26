@@ -1,6 +1,6 @@
 ---
 name: Missed detection (false negative)
-about: nodeguard failed to flag a malicious node
+about: nodesafe failed to flag a malicious node
 title: "[missed-detection] "
 labels: missed-detection, security
 ---
@@ -13,9 +13,9 @@ labels: missed-detection, security
 
 <!-- Link to Reddit thread, blog post, advisory, etc. We require traceable evidence. -->
 
-## What nodeguard reported
+## What nodesafe reported
 
-<!-- Run `nodeguard scan <path> --format json` and paste the output here. -->
+<!-- Run `nodesafe scan <path> --format json` and paste the output here. -->
 
 ```json
 

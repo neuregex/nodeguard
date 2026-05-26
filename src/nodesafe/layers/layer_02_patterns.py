@@ -7,7 +7,7 @@ matches all patterns simultaneously in O(n + m + z) — one pass over the
 content regardless of how many patterns are in the automaton.
 
 This is intentionally pattern-based, not regex-based: it's faster and more
-predictable for the large literal sets nodeguard uses. AST-aware checks live
+predictable for the large literal sets nodesafe uses. AST-aware checks live
 in Layer 3.
 
 Why categorize the patterns rather than treat them flat:
@@ -27,9 +27,9 @@ from __future__ import annotations
 import time
 from collections.abc import Iterable
 
-from nodeguard.data.signatures import PatternCategory, load_pattern_categories
-from nodeguard.layers.base import Layer, LayerResult, NodeContext
-from nodeguard.report import Finding, Severity
+from nodesafe.data.signatures import PatternCategory, load_pattern_categories
+from nodesafe.layers.base import Layer, LayerResult, NodeContext
+from nodesafe.report import Finding, Severity
 
 try:
     import ahocorasick  # type: ignore[import-not-found]

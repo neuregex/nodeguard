@@ -17,7 +17,7 @@ Patterns exercised in this fixture:
 - `getattr(obj, name_built_at_runtime)`      → dynamic_attribute_access
 
 If you are reading this in a real custom_node you installed: that node is a
-TEST FIXTURE from the nodeguard repo and should not be in your ComfyUI
+TEST FIXTURE from the nodesafe repo and should not be in your ComfyUI
 installation. Remove it.
 """
 

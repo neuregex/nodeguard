@@ -6,10 +6,10 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from nodeguard.config import Config
-from nodeguard.layers import Layer, default_layers
-from nodeguard.layers.base import NodeContext
-from nodeguard.report import Finding, Report, make_report
+from nodesafe.config import Config
+from nodesafe.layers import Layer, default_layers
+from nodesafe.layers.base import NodeContext
+from nodesafe.report import Finding, Report, make_report
 
 
 class Scanner:

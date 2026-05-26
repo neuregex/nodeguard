@@ -1,13 +1,13 @@
-# Contributing to nodeguard
+# Contributing to nodesafe
 
-Thank you for your interest in contributing. nodeguard is an OSS project building public infrastructure for ML/diffusion ecosystem security. Every contribution — code, signatures, documentation, bug reports — moves the ecosystem forward.
+Thank you for your interest in contributing. nodesafe is an OSS project building public infrastructure for ML/diffusion ecosystem security. Every contribution — code, signatures, documentation, bug reports — moves the ecosystem forward.
 
 ## Quick Start for Contributors
 
 ```bash
 # Clone
-git clone https://github.com/neuregex/nodeguard.git
-cd nodeguard
+git clone https://github.com/neuregex/nodesafe.git
+cd nodesafe
 
 # Setup with uv (recommended) or pip
 uv venv
@@ -29,7 +29,7 @@ pyright
 
 ### 1. New Malware Signatures
 
-If a malicious custom_node was reported publicly, add it to our signature DB so nodeguard catches it. See [`signatures/README.md`](signatures/README.md) for the format.
+If a malicious custom_node was reported publicly, add it to our signature DB so nodesafe catches it. See [`signatures/README.md`](signatures/README.md) for the format.
 
 Workflow:
 1. Fork the repo
@@ -39,14 +39,14 @@ Workflow:
 
 ### 2. False Positive Reports
 
-If nodeguard flagged a legitimate node as malicious, tell us. Open an issue tagged `[false-positive]` with:
+If nodesafe flagged a legitimate node as malicious, tell us. Open an issue tagged `[false-positive]` with:
 - The node (URL or path)
-- Output of `nodeguard scan <path> --format json`
+- Output of `nodesafe scan <path> --format json`
 - Why the flagged findings are actually benign
 
 ### 3. Missed Detection Reports
 
-If a malicious node passed through nodeguard undetected, tell us. Open an issue tagged `[missed-detection]` with the same info as above plus reasoning for why we should have caught it.
+If a malicious node passed through nodesafe undetected, tell us. Open an issue tagged `[missed-detection]` with the same info as above plus reasoning for why we should have caught it.
 
 ### 4. Code Contributions
 
@@ -122,17 +122,17 @@ def scan_file(
   - Non-functional (they exhibit patterns but don't actually do harm if executed)
   - Documented with what specific layer they're designed to trigger
 - **Integration tests** marked with `@pytest.mark.integration` — slow tests, full pipeline.
-- **Run `pytest --cov=nodeguard --cov-report=term-missing`** to check coverage.
+- **Run `pytest --cov=nodesafe --cov-report=term-missing`** to check coverage.
 
 ## Documentation Contributions
 
 Documentation lives in:
 - `README.md` — overview, quick start
-- `ARCHITECTURE.md` — full plan (also lives as `nodeguard-architecture-plan.md` in development)
+- `ARCHITECTURE.md` — full plan (also lives as `nodesafe-architecture-plan.md` in development)
 - `docs/threat-model.md` — STRIDE threat model
-- `docs/retrospective-analysis.md` — how nodeguard catches known incidents
+- `docs/retrospective-analysis.md` — how nodesafe catches known incidents
 - `signatures/README.md` — signature DB format
-- Per-layer documentation in `src/nodeguard/layers/<layer>.py` docstrings
+- Per-layer documentation in `src/nodesafe/layers/<layer>.py` docstrings
 
 PRs for typos, clarifications, examples, translations all welcome.
 
@@ -155,11 +155,11 @@ If you disagree with a design decision in the plan or implementation:
 ## What We Will NOT Accept
 
 - **PRs that add telemetry** of any kind, even opt-in by default. Zero telemetry is policy.
-- **PRs that monetize the project** (paywalls, freemium, "premium signatures"). nodeguard is OSS for community benefit.
+- **PRs that monetize the project** (paywalls, freemium, "premium signatures"). nodesafe is OSS for community benefit.
 - **PRs that introduce vendor lock-in** to any single LLM provider, cloud, or service.
 - **Real malware in fixtures** — synthetic patterns only.
 - **PRs without tests** for non-trivial functionality.
 
 ## Questions?
 
-Open a [discussion](https://github.com/neuregex/nodeguard/discussions) or just ask in a draft PR. We don't bite.
+Open a [discussion](https://github.com/neuregex/nodesafe/discussions) or just ask in a draft PR. We don't bite.

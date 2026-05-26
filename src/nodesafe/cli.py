@@ -8,19 +8,19 @@ from pathlib import Path
 import click
 from rich.console import Console
 
-from nodeguard import __version__
-from nodeguard.config import load_config
-from nodeguard.report import VerdictLabel
-from nodeguard.scanner import Scanner
+from nodesafe import __version__
+from nodesafe.config import load_config
+from nodesafe.report import VerdictLabel
+from nodesafe.scanner import Scanner
 
 console = Console()
 err_console = Console(stderr=True)
 
 
 @click.group()
-@click.version_option(version=__version__, prog_name="nodeguard")
+@click.version_option(version=__version__, prog_name="nodesafe")
 def main() -> None:
-    """nodeguard — security scanner for node-based workflow plugins."""
+    """nodesafe — security scanner for node-based workflow plugins."""
 
 
 @main.command()
@@ -106,9 +106,9 @@ def update() -> None:
 @main.command()
 def doctor() -> None:
     """Verify installation and signature integrity."""
-    from nodeguard.data.signatures import load_hash_signatures, load_malicious_urls
+    from nodesafe.data.signatures import load_hash_signatures, load_malicious_urls
 
-    console.print(f"[bold]nodeguard[/bold] v{__version__}")
+    console.print(f"[bold]nodesafe[/bold] v{__version__}")
     console.print(f"  Python: {sys.version.split()[0]}")
 
     sigs = load_hash_signatures()

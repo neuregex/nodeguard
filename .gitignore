@@ -44,16 +44,16 @@ uv.lock
 *~
 .DS_Store
 
-# nodeguard runtime
-nodeguard.sarif
-nodeguard-report.json
-nodeguard-report.html
-.nodeguard-cache/
+# nodesafe runtime
+nodesafe.sarif
+nodesafe-report.json
+nodesafe-report.html
+.nodesafe-cache/
 
 # Models y firmas descargadas (no commiteamos modelos grandes)
-src/nodeguard/data/models/*.bin
-src/nodeguard/data/models/*.safetensors
-src/nodeguard/data/cache/
+src/nodesafe/data/models/*.bin
+src/nodesafe/data/models/*.safetensors
+src/nodesafe/data/cache/
 
 # Local secrets
 .env

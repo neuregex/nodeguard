@@ -1,4 +1,4 @@
-# nodeguard malicious_urls.txt
+# nodesafe malicious_urls.txt
 # One URL per line. `#` starts a comment. Blank lines ignored.
 # See signatures/README.md for the format.
 #

@@ -1,4 +1,4 @@
-<!-- Thanks for contributing to nodeguard! -->
+<!-- Thanks for contributing to nodesafe! -->
 
 ## Summary
 

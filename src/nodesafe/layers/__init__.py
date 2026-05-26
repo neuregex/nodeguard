@@ -5,12 +5,12 @@ NodeContext and returns a list of Findings. Layers are designed to be
 composable, replaceable, and independently testable.
 """
 
-from nodeguard.layers.base import Layer, LayerResult, NodeContext
-from nodeguard.layers.layer_00_hash import HashLayer
-from nodeguard.layers.layer_01_bloom_url import UrlLayer
-from nodeguard.layers.layer_02_patterns import PatternLayer
-from nodeguard.layers.layer_03_ast import AstLayer
-from nodeguard.layers.layer_04_typosquatting import TyposquattingLayer
+from nodesafe.layers.base import Layer, LayerResult, NodeContext
+from nodesafe.layers.layer_00_hash import HashLayer
+from nodesafe.layers.layer_01_bloom_url import UrlLayer
+from nodesafe.layers.layer_02_patterns import PatternLayer
+from nodesafe.layers.layer_03_ast import AstLayer
+from nodesafe.layers.layer_04_typosquatting import TyposquattingLayer
 
 __all__ = [
     "AstLayer",

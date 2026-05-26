@@ -6,21 +6,21 @@ from pathlib import Path
 
 from click.testing import CliRunner
 
-from nodeguard.cli import main
+from nodesafe.cli import main
 
 
 def test_version_flag() -> None:
     runner = CliRunner()
     result = runner.invoke(main, ["--version"])
     assert result.exit_code == 0
-    assert "nodeguard" in result.output
+    assert "nodesafe" in result.output
 
 
 def test_doctor_command() -> None:
     runner = CliRunner()
     result = runner.invoke(main, ["doctor"])
     assert result.exit_code == 0
-    assert "nodeguard" in result.output
+    assert "nodesafe" in result.output
 
 
 def test_scan_benign_exits_zero(benign_fixture: Path) -> None:

@@ -6,14 +6,14 @@ from pathlib import Path
 
 import pytest
 
-from nodeguard.layers.base import NodeContext
-from nodeguard.layers.layer_04_typosquatting import (
+from nodesafe.layers.base import NodeContext
+from nodesafe.layers.layer_04_typosquatting import (
     TyposquattingLayer,
     _levenshtein,
     _parse_pyproject,
     _parse_requirements,
 )
-from nodeguard.report import Severity
+from nodesafe.report import Severity
 
 
 @pytest.fixture

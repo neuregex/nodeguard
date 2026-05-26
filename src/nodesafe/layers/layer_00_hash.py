@@ -17,9 +17,9 @@ import hashlib
 import time
 from pathlib import Path
 
-from nodeguard.data.signatures import HashSignature, load_hash_signatures
-from nodeguard.layers.base import Layer, LayerResult, NodeContext
-from nodeguard.report import Finding, Severity
+from nodesafe.data.signatures import HashSignature, load_hash_signatures
+from nodesafe.layers.base import Layer, LayerResult, NodeContext
+from nodesafe.report import Finding, Severity
 
 
 class HashLayer(Layer):

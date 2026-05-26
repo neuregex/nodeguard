@@ -65,7 +65,7 @@ jobs:
       - name: Install dependencies
         run: uv pip install --system -e ".[dev]"
       - name: pytest
-        run: pytest --cov=nodeguard --cov-report=term-missing -v
+        run: pytest --cov=nodesafe --cov-report=term-missing -v
 
   build:
     name: Build distribution

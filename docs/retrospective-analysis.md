@@ -1,6 +1,6 @@
 # Retrospective analysis
 
-This document asks: *if nodeguard had existed when these incidents happened,
+This document asks: *if nodesafe had existed when these incidents happened,
 would it have caught them?* We walk through each documented incident in the
 ComfyUI ecosystem and trace which layer of the pipeline would have flagged
 the threat.
@@ -84,9 +84,9 @@ confirmed by Layers 5-7. **Verdict: malicious, ~100ms.**
 
 ### Honest caveat (also in README)
 
-nodeguard scans individual custom_nodes. **It does NOT prevent upstream
+nodesafe scans individual custom_nodes. **It does NOT prevent upstream
 supply-chain compromise** — if Rubick.ai itself is compromised as a provider,
-nodeguard detects the malware *when it is distributed* through contaminated
+nodesafe detects the malware *when it is distributed* through contaminated
 nodes, but does not prevent the original compromise. Stating this limitation
 explicitly is important: a security tool that hides its limits loses
 credibility fast.
@@ -111,24 +111,24 @@ The threat model differs from the previous two. The malware:
 ### Critical difference
 
 The victim does not install manually. The attacker bypasses the user
-completely. nodeguard's preventive value applies only if it is **integrated
+completely. nodesafe's preventive value applies only if it is **integrated
 with the Manager**.
 
-### How nodeguard intervenes
+### How nodesafe intervenes
 
 **Vector 1 — pre-installation gate (requires Manager integration):**
 
-- If the Manager is configured to invoke nodeguard as a mandatory hook even
+- If the Manager is configured to invoke nodesafe as a mandatory hook even
   for installs via API, **the auto-install fails**.
 - The botnet bot defeats itself: requests install of `miner-node-X`,
-  nodeguard scans, Layers 2-3 trivially detect mining patterns (`xmrig`,
+  nodesafe scans, Layers 2-3 trivially detect mining patterns (`xmrig`,
   `stratum+tcp`, `JSON-RPC mining`, `nicehash`, mining-specific GPU detection
   commands), Manager refuses.
 - **This validates the criticality of the Manager PR (M3 of the roadmap).**
-  Without that integration, nodeguard only defends disciplined users who scan
-  manually. With it, nodeguard defends unaware users against automated attacks.
+  Without that integration, nodesafe only defends disciplined users who scan
+  manually. With it, nodesafe defends unaware users against automated attacks.
 
-**Vector 2 — audit existing (`nodeguard scan-installed`):**
+**Vector 2 — audit existing (`nodesafe scan-installed`):**
 
 - Command audits already-installed `custom_nodes/`.
 - The 1,000+ affected users could have run this post-incident and detected

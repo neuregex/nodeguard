@@ -1,6 +1,6 @@
 """Data models for scan reports.
 
-These models define the wire format of nodeguard reports. JSON serialization
+These models define the wire format of nodesafe reports. JSON serialization
 is the canonical format; other renderers (Markdown, SARIF) transform from these.
 """
 
@@ -77,7 +77,7 @@ class ScanMetadata(BaseModel):
 class ScannerInfo(BaseModel):
     """Identification of the scanner that produced the report."""
 
-    name: str = "nodeguard"
+    name: str = "nodesafe"
     version: str
 
 
@@ -105,7 +105,7 @@ class Report(BaseModel):
         }[self.verdict.label]
 
         lines = [
-            f"# nodeguard scan report — {self.scan.target}",
+            f"# nodesafe scan report — {self.scan.target}",
             "",
             f"**Verdict:** {emoji} `{self.verdict.label.value}` "
             f"(score `{self.verdict.score:.2f}`, confidence `{self.verdict.confidence.value}`)",
@@ -154,7 +154,7 @@ def make_report(
     findings: list[Finding],
     started_at: datetime | None = None,
     duration_ms: int = 0,
-    scanner_version: str = "0.2.0",
+    scanner_version: str = "0.3.0",
 ) -> Report:
     """Aggregate findings into a final Report with computed verdict."""
     started_at = started_at or datetime.now(timezone.utc)

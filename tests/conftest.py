@@ -52,7 +52,7 @@ def populate_test_signatures():
                         "category": ["test_synthetic"],
                         "severity": "critical",
                         "first_seen": "2026-01-01",
-                        "references": ["https://github.com/neuregex/nodeguard/tests"],
+                        "references": ["https://github.com/neuregex/nodesafe/tests"],
                     }
                 )
 
@@ -84,11 +84,11 @@ def populate_test_signatures():
     if real_top.exists():
         shutil.copy(real_top, TEST_SIGS_DIR / "top_pypi_packages.txt")
 
-    os.environ["NODEGUARD_SIGNATURES_DIR"] = str(TEST_SIGS_DIR)
+    os.environ["NODESAFE_SIGNATURES_DIR"] = str(TEST_SIGS_DIR)
 
     yield
 
-    os.environ.pop("NODEGUARD_SIGNATURES_DIR", None)
+    os.environ.pop("NODESAFE_SIGNATURES_DIR", None)
 
 
 @pytest.fixture

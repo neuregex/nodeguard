@@ -1,6 +1,6 @@
-name: "nodeguard scan"
+name: "nodesafe scan"
 description: "Scan ComfyUI custom_nodes (and other node-based plugins) for malicious code"
-author: "nodeguard contributors"
+author: "nodesafe contributors"
 branding:
   icon: "shield"
   color: "purple"
@@ -31,13 +31,13 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
 
-    - name: Install nodeguard
+    - name: Install nodesafe
       shell: bash
-      run: pip install nodeguard
+      run: pip install nodesafe
 
-    - name: Run nodeguard scan
+    - name: Run nodesafe scan
       shell: bash
       run: |
-        nodeguard scan "${{ inputs.path }}" \
+        nodesafe scan "${{ inputs.path }}" \
           --fail-on "${{ inputs.fail-on }}" \
           --format "${{ inputs.format }}"

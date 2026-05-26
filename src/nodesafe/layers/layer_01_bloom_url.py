@@ -19,9 +19,9 @@ import re
 import time
 from typing import Protocol
 
-from nodeguard.data.signatures import load_malicious_urls
-from nodeguard.layers.base import Layer, LayerResult, NodeContext
-from nodeguard.report import Finding, Severity
+from nodesafe.data.signatures import load_malicious_urls
+from nodesafe.layers.base import Layer, LayerResult, NodeContext
+from nodesafe.report import Finding, Severity
 
 # URL extraction: simple but effective. Catches http(s), no-scheme domains in
 # strings, and Discord webhook patterns specifically.

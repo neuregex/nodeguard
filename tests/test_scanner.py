@@ -6,9 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from nodeguard.config import Config
-from nodeguard.report import VerdictLabel
-from nodeguard.scanner import Scanner
+from nodesafe.config import Config
+from nodesafe.report import VerdictLabel
+from nodesafe.scanner import Scanner
 
 
 def test_benign_target_yields_clean_verdict(benign_fixture: Path) -> None:
@@ -43,7 +43,7 @@ def test_report_to_json_roundtrip(benign_fixture: Path) -> None:
     report = scanner.scan(benign_fixture)
     payload = report.to_json()
     assert "schema_version" in payload
-    assert "nodeguard" in payload
+    assert "nodesafe" in payload
 
 
 def test_report_to_markdown_includes_verdict(benign_fixture: Path) -> None:

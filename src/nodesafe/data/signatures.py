@@ -8,7 +8,7 @@ Signatures live as plain-text files at the repo root under `signatures/`:
 - `patterns.json` — categorized patterns for Layer 2 (Aho-Corasick).
 
 The loader is intentionally simple and dependency-free. Resolving the
-signatures directory uses an env var (`NODEGUARD_SIGNATURES_DIR`) when set,
+signatures directory uses an env var (`NODESAFE_SIGNATURES_DIR`) when set,
 falling back to the bundled location.
 """
 
@@ -50,12 +50,12 @@ def _signatures_dir() -> Path:
     """Resolve where signature files live.
 
     Order of precedence:
-    1. NODEGUARD_SIGNATURES_DIR env var (used by tests, allows overrides).
-    2. Wheel-bundled location (`nodeguard/_bundled_signatures/`) — populated by
+    1. NODESAFE_SIGNATURES_DIR env var (used by tests, allows overrides).
+    2. Wheel-bundled location (`nodesafe/_bundled_signatures/`) — populated by
        hatch's force-include when building the wheel.
     3. Repo-root `signatures/` directory — used during development install.
     """
-    if env := os.environ.get("NODEGUARD_SIGNATURES_DIR"):
+    if env := os.environ.get("NODESAFE_SIGNATURES_DIR"):
         return Path(env)
 
     # 2) Wheel-bundled location: sibling to the `data/` directory inside the

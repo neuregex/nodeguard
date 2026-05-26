@@ -6,9 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from nodeguard.layers.base import NodeContext
-from nodeguard.layers.layer_03_ast import AstLayer
-from nodeguard.report import Severity
+from nodesafe.layers.base import NodeContext
+from nodesafe.layers.layer_03_ast import AstLayer
+from nodesafe.report import Severity
 
 
 @pytest.fixture

@@ -1,6 +1,6 @@
-# nodeguard signature database
+# nodesafe signature database
 
-This directory bundles the signature databases that ship with nodeguard.
+This directory bundles the signature databases that ship with nodesafe.
 
 ## Files
 
@@ -71,5 +71,5 @@ We commit to merging well-formed signature PRs within 7 days.
 ## Update mechanism (future, post-v0.1)
 
 - Signature updates published as GitHub Releases.
-- `nodeguard update` downloads the latest signed bundle.
+- `nodesafe update` downloads the latest signed bundle.
 - Signatures verified against project GPG key before applying.

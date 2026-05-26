@@ -11,7 +11,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from nodeguard.report import Finding
+from nodesafe.report import Finding
 
 
 @dataclass
