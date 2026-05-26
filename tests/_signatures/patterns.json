@@ -1,0 +1,302 @@
+{
+  "schema_version": "1.0",
+  "description": "Initial curated pattern set for Layer 2 (Aho-Corasick). Patterns are categorized by intent and severity. Each match becomes a Finding.",
+  "metadata": {
+    "version": "0.2.0",
+    "last_updated": "2026-05-25",
+    "total_patterns": 207
+  },
+  "categories": {
+    "code_execution": {
+      "severity": "high",
+      "cwe": "CWE-95",
+      "description": "Dynamic code execution constructs that can run arbitrary code at runtime.",
+      "patterns": [
+        "eval(",
+        "exec(",
+        "compile(",
+        "__import__(",
+        "importlib.import_module",
+        "execfile(",
+        "single mode\")",
+        "globals()[",
+        "locals()["
+      ]
+    },
+    "shell_execution": {
+      "severity": "high",
+      "cwe": "CWE-78",
+      "description": "Spawning shell processes, especially with shell=True or unsanitized input.",
+      "patterns": [
+        "subprocess.run",
+        "subprocess.Popen",
+        "subprocess.call",
+        "subprocess.check_call",
+        "subprocess.check_output",
+        "subprocess.getoutput",
+        "subprocess.getstatusoutput",
+        "os.system(",
+        "os.popen(",
+        "os.execv",
+        "os.execvp",
+        "os.execve",
+        "os.spawnl",
+        "os.spawnv",
+        "shell=True",
+        "pty.spawn",
+        "commands.getoutput"
+      ]
+    },
+    "encoded_payload": {
+      "severity": "high",
+      "cwe": "CWE-506",
+      "description": "Decoding obfuscated payloads, often combined with exec/eval to hide intent from static review.",
+      "patterns": [
+        "base64.b64decode",
+        "base64.decodebytes",
+        "base64.urlsafe_b64decode",
+        "base64.b32decode",
+        "base64.b16decode",
+        "base64.a85decode",
+        "codecs.decode",
+        "binascii.unhexlify",
+        "binascii.a2b_hex",
+        "bytes.fromhex",
+        "marshal.loads",
+        "pickle.loads",
+        "pickle.Unpickler",
+        "cloudpickle.loads",
+        "dill.loads",
+        "zlib.decompress",
+        "lzma.decompress",
+        "gzip.decompress"
+      ]
+    },
+    "network_call": {
+      "severity": "medium",
+      "cwe": "CWE-913",
+      "description": "Outbound network operations. Context-dependent — benign in API integration nodes, suspicious in core compute nodes.",
+      "patterns": [
+        "requests.post",
+        "requests.put",
+        "requests.patch",
+        "requests.delete",
+        "urllib.request.urlopen",
+        "urllib.request.Request",
+        "urllib2.urlopen",
+        "http.client.HTTPSConnection",
+        "http.client.HTTPConnection",
+        "socket.socket",
+        "socket.create_connection",
+        "ftplib.FTP",
+        "smtplib.SMTP",
+        "telnetlib.Telnet",
+        "paramiko.SSHClient",
+        "aiohttp.ClientSession",
+        "httpx.post",
+        "httpx.put"
+      ]
+    },
+    "exfiltration_channel": {
+      "severity": "critical",
+      "cwe": "CWE-200",
+      "description": "Known exfiltration sinks used by malware: Discord webhooks, paste services, generic file uploaders.",
+      "patterns": [
+        "discord.com/api/webhooks/",
+        "discordapp.com/api/webhooks/",
+        "canary.discord.com/api/webhooks/",
+        "ptb.discord.com/api/webhooks/",
+        "hooks.slack.com/services/",
+        "api.telegram.org/bot",
+        "paste.ee/p/",
+        "pastebin.com/raw/",
+        "hastebin.com/raw/",
+        "ix.io",
+        "transfer.sh",
+        "0x0.st",
+        "file.io",
+        "tmpfiles.org",
+        "anonfiles.com",
+        "ngrok.io"
+      ]
+    },
+    "browser_credentials": {
+      "severity": "critical",
+      "cwe": "CWE-522",
+      "description": "Paths to browser-stored credentials, cookies, and session data. Used by credential stealers.",
+      "patterns": [
+        "\\\\Cookies",
+        "\\\\Local State",
+        "\\\\Login Data",
+        "\\\\Web Data",
+        "\\\\History",
+        "\\\\Bookmarks",
+        "\\\\Network\\\\Cookies",
+        "\\\\Default\\\\Cookies",
+        "Chrome\\\\User Data",
+        "Microsoft\\\\Edge\\\\User Data",
+        "Mozilla\\\\Firefox\\\\Profiles",
+        "BraveSoftware\\\\Brave-Browser",
+        "Opera Software",
+        "Vivaldi\\\\User Data",
+        "/.config/google-chrome/",
+        "/.config/chromium/",
+        "/.mozilla/firefox/",
+        "/Library/Application Support/Google/Chrome",
+        "logins.json",
+        "key4.db",
+        "cookies.sqlite",
+        "places.sqlite"
+      ]
+    },
+    "wallet_paths": {
+      "severity": "critical",
+      "cwe": "CWE-312",
+      "description": "Crypto wallet files and browser extension storage targeted by wallet stealers.",
+      "patterns": [
+        "wallet.dat",
+        "keystore.json",
+        "Electrum\\\\wallets",
+        "Exodus\\\\exodus.wallet",
+        "Atomic\\\\Local Storage\\\\leveldb",
+        "MetaMask",
+        "nkbihfbeogaeaoehlefnkodbefgpgknn",
+        "ejbalbakoplchlghecdalmeeeajnimhm",
+        "bfnaelmomeimhlpmgjnjophhpkkoljpa",
+        "fnjhmkhhmkbjkkabndcnnogagogbneec",
+        "ibnejdfjmmkpcnlpebklmnkoeoihofec",
+        "egjidjbpglichdcondbcbdnbeeppgdph",
+        "hpglfhgfnhbgpjdenjgmdgoeiappafln",
+        "mcohilncbfahbmgdjkbpemcciiolgcge",
+        "nphplpgoakhhjchkkhmiggakijnkhfnd",
+        "fhbohimaelbohpjbbldcngcnapndodjp",
+        "ronin.json",
+        "trustwallet",
+        "phantom-wallet"
+      ]
+    },
+    "system_credentials": {
+      "severity": "critical",
+      "cwe": "CWE-522",
+      "description": "System-level credential files: SSH keys, cloud credentials, container secrets.",
+      "patterns": [
+        "/.ssh/id_rsa",
+        "/.ssh/id_ed25519",
+        "/.ssh/id_ecdsa",
+        "/.ssh/id_dsa",
+        "/.ssh/known_hosts",
+        "/.ssh/authorized_keys",
+        "/.aws/credentials",
+        "/.aws/config",
+        "/.azure/accessTokens.json",
+        "/.docker/config.json",
+        "/.kube/config",
+        "/.gnupg/secring.gpg",
+        "/.npmrc",
+        "/.pypirc",
+        "/.netrc",
+        "/.git-credentials"
+      ]
+    },
+    "persistence_unix": {
+      "severity": "high",
+      "cwe": "CWE-506",
+      "description": "Linux/macOS persistence mechanisms: cron, systemd, shell profiles.",
+      "patterns": [
+        "crontab -e",
+        "crontab -l",
+        "systemctl --user enable",
+        "systemctl enable",
+        "/etc/cron.d/",
+        "/etc/cron.daily/",
+        "/etc/cron.hourly/",
+        "/etc/systemd/system/",
+        "/.config/systemd/user/",
+        "/.config/autostart/",
+        "/.bashrc",
+        "/.bash_profile",
+        "/.profile",
+        "/.zshrc",
+        "/Library/LaunchAgents",
+        "/Library/LaunchDaemons",
+        "launchctl load"
+      ]
+    },
+    "persistence_windows": {
+      "severity": "high",
+      "cwe": "CWE-506",
+      "description": "Windows persistence mechanisms: registry Run keys, scheduled tasks, startup folder.",
+      "patterns": [
+        "HKEY_CURRENT_USER\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run",
+        "HKLM\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run",
+        "HKCU\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\RunOnce",
+        "winreg.SetValueEx",
+        "winreg.CreateKey",
+        "winreg.OpenKey",
+        "schtasks /create",
+        "schtasks.exe",
+        "Start Menu\\\\Programs\\\\Startup",
+        "WScript.Shell",
+        "powershell -enc",
+        "powershell -EncodedCommand",
+        "powershell -NoProfile -WindowStyle Hidden"
+      ]
+    },
+    "mining": {
+      "severity": "critical",
+      "cwe": "CWE-400",
+      "description": "Cryptocurrency mining indicators: pool URLs, miner binaries, stratum protocol.",
+      "patterns": [
+        "stratum+tcp://",
+        "stratum+ssl://",
+        "stratum2+tcp://",
+        "xmrig",
+        "xmr-stak",
+        "minerd",
+        "ethminer",
+        "ccminer",
+        "nicehash",
+        "pool.minexmr.com",
+        "pool.supportxmr.com",
+        "nanopool.org",
+        "ethermine.org",
+        "f2pool.com",
+        "antpool.com",
+        "monero.crypto-pool",
+        "--coin monero",
+        "--algo cryptonight",
+        "--algo ethash",
+        "json-rpc.mining"
+      ]
+    },
+    "obfuscation_chains": {
+      "severity": "medium",
+      "cwe": "CWE-506",
+      "description": "Patterns commonly seen in obfuscated payloads. Lower severity individually; high when combined with execution.",
+      "patterns": [
+        "chr(int(",
+        "ord(",
+        "\\\\x00\\\\x00",
+        "rot13",
+        "codecs.encode",
+        "lambda x:",
+        "lambda _:",
+        "getattr(__builtins__"
+      ]
+    },
+    "info_gathering": {
+      "severity": "low",
+      "cwe": "CWE-200",
+      "description": "Host fingerprinting. Common in many tools; flagged but low severity.",
+      "patterns": [
+        "platform.system",
+        "platform.machine",
+        "platform.node",
+        "getpass.getuser",
+        "socket.gethostname",
+        "uuid.getnode",
+        "psutil.process_iter"
+      ]
+    }
+  }
+}
