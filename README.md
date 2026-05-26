@@ -2,9 +2,11 @@
 
 > Security scanner for ComfyUI custom nodes — and the emerging standard for node-based workflow plugin security.
 
-[![CI](https://github.com/neuregex/nodesafe/actions/workflows/ci.yml/badge.svg)](https://github.com/neuregex/nodesafe/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/nodesafe.svg)](https://pypi.org/project/nodesafe/)
+[![Python](https://img.shields.io/pypi/pyversions/nodesafe.svg)](https://pypi.org/project/nodesafe/)
+[![Downloads](https://img.shields.io/pypi/dm/nodesafe.svg)](https://pypi.org/project/nodesafe/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![CI](https://github.com/neuregex/nodesafe/actions/workflows/ci.yml/badge.svg)](https://github.com/neuregex/nodesafe/actions/workflows/ci.yml)
 
 `nodesafe` scans third-party plugins/nodes before you install them in node-based workflow tools, detecting malicious code with a cascading pipeline that combines static analysis, signature matching, machine learning, and optional semantic analysis with an LLM. Starting point: the ComfyUI ecosystem.
 
@@ -45,7 +47,7 @@ A 9-layer cascading pipeline. Each layer more expensive than the previous. Most 
 | 7 | Semantic similarity (CodeBERT embeddings + FAISS) | hundreds of ms |
 | 8 | LLM review (optional, local-first via Ollama) | seconds |
 
-**Current state (v0.1):** Layers 0 and 1 functional. Layers 2-3 in M1 sprint. The rest in the M2-M4 roadmap.
+**Current state (v0.3.1):** Layers 0-4 functional and shipping on PyPI. 50 tests passing across Python 3.10–3.12 × Linux/macOS/Windows. Layers 5-8 in the M2-M4 roadmap.
 
 ## Features
 
@@ -140,10 +142,10 @@ enabled = false                     # ALWAYS false. Immutable policy.
 
 ## Roadmap
 
-- **v0.1 (M1, current):** Layers 0-3, functional MVP, silent launch
-- **v0.5 (M2):** Layer 5 ML + Semgrep + OSV integration + first public wave
-- **v1.0 (M3):** Layers 6-7 + PR to ComfyUI-Manager + formal launch
-- **v1.5 (M4):** Layer 8 LLM + public report + consolidated community
+- **v0.3.x (M1, shipped):** Layers 0-4 — hash matching, malicious URLs, Aho-Corasick patterns, AST analysis, typosquatting + OSV. Available now via `pip install nodesafe`.
+- **v0.5 (M2):** Layer 5 ML (Naive Bayes + XGBoost) + Semgrep backend + first public wave
+- **v1.0 (M3):** Layers 6-7 (anomaly detection + CodeBERT) + PR to ComfyUI-Manager + formal launch
+- **v1.5 (M4):** Layer 8 LLM (Ollama-first) + public threat report + consolidated community
 - **v2+ (Year 2):** `.nodesafe` standard portable to other node-based ecosystems
 
 Full plan in [`ARCHITECTURE.md`](ARCHITECTURE.md).
