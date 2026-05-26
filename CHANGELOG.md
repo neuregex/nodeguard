@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-05-25
+
+First public release. Closes M1: a hermetic, offline-capable scanner with
+five complementary detection layers covering known-bad hashes, malicious
+URLs, suspicious literal patterns, structural AST risk, and typosquatting
+against the popular PyPI baseline. Optional OSV.dev CVE lookup for
+declared dependencies is wired in and opt-in.
+
 ### Added
 - **Layer 4 (typosquatting + OSV):** parses `requirements.txt` and `pyproject.toml`
   from the scanned node, fuzzy-matches each dependency against a curated baseline
@@ -76,6 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Layer 8 (LLM, local-first Ollama) - v1.0
 - ComfyUI Manager integration PR - v1.0
 
-## [0.1.0] - UNRELEASED
+## [0.1.0] — never released
 
-First tagged alpha. Layer 0 + Layer 1 functional. Silent launch.
+Internal milestone. Layer 0 + Layer 1 functional. No public tag pushed;
+superseded by v0.2.0 which includes Layers 2-4.

@@ -11,7 +11,7 @@ from nodeguard.config import Config, load_config
 from nodeguard.report import Finding, Report, Verdict
 from nodeguard.scanner import Scanner
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "Config",
