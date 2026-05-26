@@ -78,6 +78,12 @@ def populate_test_signatures():
     if real_patterns.exists():
         shutil.copy(real_patterns, TEST_SIGS_DIR / "patterns.json")
 
+    # 4) Copy the top PyPI packages baseline so Layer 4 has it on disk if
+    # any test instantiates `TyposquattingLayer()` without an override.
+    real_top = repo_root / "signatures" / "top_pypi_packages.txt"
+    if real_top.exists():
+        shutil.copy(real_top, TEST_SIGS_DIR / "top_pypi_packages.txt")
+
     os.environ["NODEGUARD_SIGNATURES_DIR"] = str(TEST_SIGS_DIR)
 
     yield

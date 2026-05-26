@@ -168,4 +168,4 @@ def _extract_line(content: str, offset: int, max_len: int = 200) -> str:
 
 
 def _short(pattern: str, max_len: int = 60) -> str:
-    return pattern if len(pattern) <= max_len else pattern[: max_len - 3]
+    return pattern if len(pattern) <= max_len else pattern[: max_len - 3] + "..."

@@ -10,6 +10,7 @@ from nodeguard.layers.layer_00_hash import HashLayer
 from nodeguard.layers.layer_01_bloom_url import UrlLayer
 from nodeguard.layers.layer_02_patterns import PatternLayer
 from nodeguard.layers.layer_03_ast import AstLayer
+from nodeguard.layers.layer_04_typosquatting import TyposquattingLayer
 
 __all__ = [
     "AstLayer",
@@ -18,6 +19,7 @@ __all__ = [
     "LayerResult",
     "NodeContext",
     "PatternLayer",
+    "TyposquattingLayer",
     "UrlLayer",
 ]
 
@@ -26,8 +28,8 @@ def default_layers(layer_ids: list[str] | None = None) -> list[Layer]:
     """Build the default layer set for the configured IDs.
 
     Args:
-        layer_ids: List of string IDs like ["0", "1", "2", "3"]. If None,
-            returns the layers available in the current minor version.
+        layer_ids: List of string IDs like ["0", "1", "2", "3", "4"]. If
+            None, returns the layers available in the current minor version.
 
     Returns:
         Ordered list of Layer instances.
@@ -37,7 +39,8 @@ def default_layers(layer_ids: list[str] | None = None) -> list[Layer]:
         "1": UrlLayer,
         "2": PatternLayer,
         "3": AstLayer,
+        "4": TyposquattingLayer,
     }
     if layer_ids is None:
-        layer_ids = ["0", "1", "2", "3"]
+        layer_ids = ["0", "1", "2", "3", "4"]
     return [registry[lid]() for lid in layer_ids if lid in registry]

@@ -140,6 +140,41 @@ def load_malicious_urls(path: Path | None = None) -> set[str]:
     return urls
 
 
+def load_top_pypi_packages(path: Path | None = None) -> list[str]:
+    """Load the curated list of top PyPI package names (typosquatting baseline).
+
+    The file format is plain text, one PEP 503 normalized name per line.
+    Lines starting with `#` and blank lines are ignored.
+
+    Args:
+        path: Optional explicit path. Defaults to bundled
+            `top_pypi_packages.txt`.
+
+    Returns:
+        Sorted, deduplicated list of normalized package names.
+    """
+    if path is None:
+        path = _signatures_dir() / "top_pypi_packages.txt"
+
+    names: set[str] = set()
+    if not path.exists():
+        return []
+
+    with path.open(encoding="utf-8") as f:
+        for line in f:
+            stripped = line.strip()
+            if not stripped or stripped.startswith("#"):
+                continue
+            # PEP 503 normalization: lowercase, runs of [-_.] collapse to a
+            # single hyphen.
+            normalized = stripped.lower().replace("_", "-").replace(".", "-")
+            while "--" in normalized:
+                normalized = normalized.replace("--", "-")
+            names.add(normalized)
+
+    return sorted(names)
+
+
 def load_pattern_categories(path: Path | None = None) -> list[PatternCategory]:
     """Load Layer 2 patterns grouped by category.
 

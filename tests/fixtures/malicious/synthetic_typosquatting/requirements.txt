@@ -1,0 +1,22 @@
+# Synthetic typosquatting fixture. Names below are deliberately misspelled
+# to exercise Layer 4. DO NOT install this file.
+
+# Direct one-character typos (distance 1) — should be HIGH severity findings.
+requets==2.31.0
+numpyy>=1.24
+torcch==2.1.0
+
+# Two-character typos (distance 2) — should be MEDIUM severity.
+pythhorch==2.0.0
+
+# Legitimate, exact-match dependency — must NOT be flagged.
+pillow>=10.0
+
+# Pip directives + URLs should be ignored gracefully.
+--index-url https://pypi.org/simple
+-r ./other-requirements.txt
+git+https://github.com/example/repo.git@main
+
+# A non-canonical-but-valid form with extras should still resolve to the
+# normalized name. `requests[security]` is genuine; we expect no finding.
+requests[security]>=2.30

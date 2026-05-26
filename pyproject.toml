@@ -28,22 +28,21 @@ dependencies = [
     "rich>=13.0",
     "pydantic>=2.0",
     "pyahocorasick>=2.0",
+    "rapidfuzz>=3.0",
     "tomli>=2.0; python_version < '3.11'",
 ]
 
 [project.optional-dependencies]
 # Optional extras — install on demand to keep the footprint small for advanced layers
 ast = ["libcst>=1.0"]                                                        # Layer 3 enhanced
-typosquatting = ["rapidfuzz>=3.0"]                                           # Layer 4
 ml = ["scikit-learn>=1.4", "xgboost>=2.0"]                                   # Layer 5
 anomaly = ["scikit-learn>=1.4", "torch>=2.0"]                                # Layer 6
 similarity = ["transformers>=4.40", "faiss-cpu>=1.7", "sentence-transformers>=3.0"]  # Layer 7
 llm = ["litellm>=1.50", "ollama>=0.3"]                                       # Layer 8
 semgrep = ["semgrep>=1.50"]                                                  # Optional Layer 3 backend
 
-# Convenience bundles
-mvp = ["nodeguard[typosquatting]"]                                           # Layers 0-4 (Layer 2 is core)
-full = ["nodeguard[ast,typosquatting,ml,anomaly,similarity,llm,semgrep]"]
+# Convenience bundles (rapidfuzz is core, so no typosquatting extras needed)
+full = ["nodeguard[ast,ml,anomaly,similarity,llm,semgrep]"]
 dev = ["pytest>=8.0", "pytest-cov>=4.1", "ruff>=0.4", "pyright>=1.1"]
 
 [project.scripts]
@@ -67,6 +66,7 @@ packages = ["src/nodeguard"]
 "signatures/known_malware.jsonl" = "nodeguard/_bundled_signatures/known_malware.jsonl"
 "signatures/malicious_urls.txt" = "nodeguard/_bundled_signatures/malicious_urls.txt"
 "signatures/patterns.json" = "nodeguard/_bundled_signatures/patterns.json"
+"signatures/top_pypi_packages.txt" = "nodeguard/_bundled_signatures/top_pypi_packages.txt"
 
 [tool.hatch.build.targets.sdist]
 include = [
