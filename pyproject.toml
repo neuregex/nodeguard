@@ -1,6 +1,6 @@
 [project]
 name = "nodesafe"
-version = "0.3.1"
+version = "0.4.0"
 description = "Security scanner for ComfyUI custom nodes and node-based workflow plugins"
 readme = "README.md"
 license = { text = "Apache-2.0" }

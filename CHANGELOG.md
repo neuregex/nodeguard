@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-05-25
+
+### Added
+- **Layer 5 (heuristic risk scoring):** new aggregate-score layer that combines
+  structural signals — direct dangerous-call counts (eval/exec/compile/__import__),
+  qualified-call counts (subprocess/os.system/pickle.loads/decoder calls),
+  `shell=True` usage, `exec(b64decode(...))` chains, suspicious imports,
+  dynamic `getattr` patterns, long base64/hex-looking embedded strings, network
+  call density, manifest anomalies (VCS- and URL-installed deps), and overall
+  dangerous-call density. Produces a single calibrated score in [0.0, 1.0]
+  with the top contributing reasons attached. Thresholds: >=0.85 CRITICAL,
+  >=0.60 HIGH, >=0.35 MEDIUM. Below 0.35 the layer is silent.
+- `src/nodesafe/layers/_features.py`: reusable feature extractor with
+  `NodeFeatures` dataclass + `extract_features(context)`. Designed as the
+  same input shape we would feed a learned ML classifier later — heuristic
+  ↔ ML swap is local to `score_features`.
+- `tests/test_layer_05_heuristic.py`: 16 tests covering metadata, benign
+  pass-through, multi-fixture detection, feature counting (eval/exec/shell=True),
+  syntax-error tolerance, manifest scanning, score capping, property invariants.
+- `default_layers` is now `"0,1,2,3,4,5"`.
+
+### Honest framing
+- Layer 5 is a hand-calibrated heuristic, **not** a trained ML model. The
+  architecture plan called for Naive Bayes + XGBoost; that's still the target
+  for v0.5 once we have enough labeled custom_node samples to train responsibly.
+  Shipping a learned model on five synthetic fixtures would be worse than
+  honest heuristics. The feature extractor is the same shape we would feed
+  a future classifier, so the swap is one-line in `score_features`.
+
 ## [0.3.1] - 2026-05-25
 
 First PyPI release under the `nodesafe` name. Sets up the automated

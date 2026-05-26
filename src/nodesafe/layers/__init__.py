@@ -11,10 +11,12 @@ from nodesafe.layers.layer_01_bloom_url import UrlLayer
 from nodesafe.layers.layer_02_patterns import PatternLayer
 from nodesafe.layers.layer_03_ast import AstLayer
 from nodesafe.layers.layer_04_typosquatting import TyposquattingLayer
+from nodesafe.layers.layer_05_heuristic import HeuristicLayer
 
 __all__ = [
     "AstLayer",
     "HashLayer",
+    "HeuristicLayer",
     "Layer",
     "LayerResult",
     "NodeContext",
@@ -40,7 +42,8 @@ def default_layers(layer_ids: list[str] | None = None) -> list[Layer]:
         "2": PatternLayer,
         "3": AstLayer,
         "4": TyposquattingLayer,
+        "5": HeuristicLayer,
     }
     if layer_ids is None:
-        layer_ids = ["0", "1", "2", "3", "4"]
+        layer_ids = ["0", "1", "2", "3", "4", "5"]
     return [registry[lid]() for lid in layer_ids if lid in registry]
