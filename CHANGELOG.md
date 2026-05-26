@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-05-25
+
+First PyPI release under the `nodesafe` name. Sets up the automated
+release pipeline via GitHub Actions OIDC + Trusted Publishing.
+No code changes from v0.3.0; cuts a new tag so the freshly added
+`release.yml` workflow has something to publish.
+
+## [0.3.0] - 2026-05-25
+
+Rebrand from `nodeguard` to `nodesafe`. The previous name conflicted
+with an unrelated PyPI project published 10 days before our first
+release. Functionally identical to v0.2.0 of `nodeguard`. Public API
+import path changed: `from nodeguard import Scanner` becomes
+`from nodesafe import Scanner`.
+
 ## [0.2.0] — 2026-05-25
 
 First public release. Closes M1: a hermetic, offline-capable scanner with
