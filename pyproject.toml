@@ -42,8 +42,8 @@ llm = ["litellm>=1.50", "ollama>=0.3"]                                       # L
 semgrep = ["semgrep>=1.50"]                                                  # Optional Layer 3 backend
 
 # Convenience bundles
-mvp = ["nodeguard[patterns,typosquatting]"]                                  # Layers 0-4
-full = ["nodeguard[patterns,ast,typosquatting,ml,anomaly,similarity,llm,semgrep]"]
+mvp = ["nodeguard[typosquatting]"]                                           # Layers 0-4 (Layer 2 is core)
+full = ["nodeguard[ast,typosquatting,ml,anomaly,similarity,llm,semgrep]"]
 dev = ["pytest>=8.0", "pytest-cov>=4.1", "ruff>=0.4", "pyright>=1.1"]
 
 [project.scripts]
