@@ -8,22 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **Layer 2 (Aho-Corasick patterns):** multi-pattern matching over curated
-  literals, categorized by intent (code_execution, shell_execution,
-  encoded_payload, network_call, exfiltration_channel, browser_credentials,
-  wallet_paths, system_credentials, persistence_unix, persistence_windows,
-  mining, obfuscation_chains, info_gathering). ~200 initial patterns shipped
-  in `signatures/patterns.json`. Backed by `pyahocorasick`; gracefully a
-  no-op if the dependency is missing.
-- `PatternCategory` dataclass and `load_pattern_categories()` loader.
-- `tests/fixtures/malicious/synthetic_pattern_chain/` exercising several
-  categories at once.
-- `tests/test_layer_02_patterns.py` — 6 tests covering metadata, benign
-  pass-through, multi-category detection, severity mapping, empty patterns,
-  per-line dedup.
+- **Layer 3 (AST analysis):** stdlib-based `ast.NodeVisitor` that finds
+  structural risk: direct `eval`/`exec`/`compile`/`__import__` calls,
+  qualified calls to dangerous functions (`subprocess.*`, `os.system`,
+  `pickle.loads`, `marshal.loads`, base64 decoders, etc.), `shell=True`
+  in subprocess calls (escalated to CRITICAL), the `exec(b64decode(...))`
+  obfuscated-loader chain (escalated to CRITICAL), suspicious imports
+  (`pickle`, `marshal`, `ctypes`, `winreg`), and dynamic `getattr` with
+  non-literal attribute names. Unparseable Python files are skipped
+  silently. New `default_layers` is `"0,1,2,3"`.
+- `tests/fixtures/malicious/synthetic_ast_loader/` exercising all the
+  AST detections in inert `if False:` blocks.
+- `tests/test_layer_03_ast.py` — 8 tests covering metadata, benign
+  pass-through, multi-category detection, CRITICAL escalation for
+  obfuscated loaders + shell=True, snippet/line presence, syntax-error
+  graceful handling, and false-positive avoidance for static `getattr`.
 
-### Changed
-- `pyahocorasick` is now a core dependency (was optional).
-- Default `scanner.default_layers` is `"0,1,2"` (was `"0,1"`).
-- Wheel build now uses `force-include` to bundle `signatures/*` inside the
-  installed package, so loading still works in fresh
+- **Layer 2 (Aho-Corasick patterns):** multi-pattern matching ov
