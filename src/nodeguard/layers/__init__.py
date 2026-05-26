@@ -8,15 +8,24 @@ composable, replaceable, and independently testable.
 from nodeguard.layers.base import Layer, LayerResult, NodeContext
 from nodeguard.layers.layer_00_hash import HashLayer
 from nodeguard.layers.layer_01_bloom_url import UrlLayer
+from nodeguard.layers.layer_02_patterns import PatternLayer
 
-__all__ = ["HashLayer", "Layer", "LayerResult", "NodeContext", "UrlLayer"]
+__all__ = [
+    "HashLayer",
+    "Layer",
+    "LayerResult",
+    "NodeContext",
+    "PatternLayer",
+    "UrlLayer",
+]
 
 
 def default_layers(layer_ids: list[str] | None = None) -> list[Layer]:
     """Build the default layer set for the configured IDs.
 
     Args:
-        layer_ids: List of string IDs like ["0", "1"]. If None, returns Capas 0-1 (MVP).
+        layer_ids: List of string IDs like ["0", "1", "2"]. If None, returns
+            the layers available in the current minor version.
 
     Returns:
         Ordered list of Layer instances.
@@ -24,7 +33,8 @@ def default_layers(layer_ids: list[str] | None = None) -> list[Layer]:
     registry = {
         "0": HashLayer,
         "1": UrlLayer,
+        "2": PatternLayer,
     }
     if layer_ids is None:
-        layer_ids = ["0", "1"]
+        layer_ids = ["0", "1", "2"]
     return [registry[lid]() for lid in layer_ids if lid in registry]

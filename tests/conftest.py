@@ -2,8 +2,6 @@
 
 The strategy: tests use their own ephemeral signature database located in
 `tests/_signatures/`, populated from the fixture files at session start.
-This decouples test setup from the production signature DB and keeps the
-bundled `signatures/` directory honest (only real public-disclosure entries).
 """
 
 from __future__ import annotations
@@ -11,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import shutil
 from pathlib import Path
 
 import pytest
@@ -30,20 +29,18 @@ def _sha256_of_file(path: Path) -> str:
 
 @pytest.fixture(scope="session", autouse=True)
 def populate_test_signatures():
-    """Build a synthetic signature DB derived from fixture file hashes.
-
-    Runs once per test session. After this, `NODEGUARD_SIGNATURES_DIR` points
-    at the generated dir, so any code calling `load_hash_signatures()` or
-    `load_malicious_urls()` sees the test fixture-derived data.
-    """
+    """Build a synthetic signature DB derived from fixture file hashes."""
     TEST_SIGS_DIR.mkdir(exist_ok=True, parents=True)
 
-    # 1) Hash signatures derived from synthetic malicious fixtures
-    malicious_dir = FIXTURES_ROOT / "malicious"
+    # 1) Hash signatures derived from synthetic malicious fixtures.
+    # Only sign the credential-pattern fixture so Layer 0 tests stay
+    # deterministic; do NOT sign the pattern-chain fixture (Layer 2 tests
+    # rely on Layer 0 NOT firing on it).
+    target_dir = FIXTURES_ROOT / "malicious" / "synthetic_credential_pattern"
     hash_entries: list[dict] = []
     counter = 0
-    if malicious_dir.exists():
-        for path in sorted(malicious_dir.rglob("*")):
+    if target_dir.exists():
+        for path in sorted(target_dir.rglob("*")):
             if path.is_file() and path.suffix == ".py":
                 counter += 1
                 hash_entries.append(
@@ -74,12 +71,17 @@ def populate_test_signatures():
     url_file = TEST_SIGS_DIR / "malicious_urls.txt"
     url_file.write_text("\n".join(test_urls) + "\n", encoding="utf-8")
 
-    # Point the loader at our test dir
+    # 3) Copy the real bundled patterns.json so Layer 2 tests run against
+    # the actual production pattern set.
+    repo_root = TESTS_ROOT.parent
+    real_patterns = repo_root / "signatures" / "patterns.json"
+    if real_patterns.exists():
+        shutil.copy(real_patterns, TEST_SIGS_DIR / "patterns.json")
+
     os.environ["NODEGUARD_SIGNATURES_DIR"] = str(TEST_SIGS_DIR)
 
     yield
 
-    # Cleanup (optional — pytest usually doesn't need this but keeps things tidy)
     os.environ.pop("NODEGUARD_SIGNATURES_DIR", None)
 
 
@@ -91,5 +93,5 @@ def benign_fixture() -> Path:
 
 @pytest.fixture
 def malicious_fixture() -> Path:
-    """Path to a synthetic-malicious fixture node."""
+    """Path to a synthetic-malicious fixture node (credential-pattern)."""
     return FIXTURES_ROOT / "malicious" / "synthetic_credential_pattern"

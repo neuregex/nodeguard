@@ -39,7 +39,7 @@ class LlmConfig(BaseModel):
 
 
 class ScannerConfig(BaseModel):
-    default_layers: str = "0,1"  # MVP scope — extender al añadir layers
+    default_layers: str = "0,1,2"  # Layers shipped in the current version.
     fail_on: str = "suspicious"  # "none" | "suspicious" | "malicious"
 
 

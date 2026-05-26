@@ -5,6 +5,7 @@ Signatures live as plain-text files at the repo root under `signatures/`:
   `signatures/README.md`.
 - `malicious_urls.txt` — one URL per line, comments (`#`) and blank lines
   allowed.
+- `patterns.json` — categorized patterns for Layer 2 (Aho-Corasick).
 
 The loader is intentionally simple and dependency-free. Resolving the
 signatures directory uses an env var (`NODEGUARD_SIGNATURES_DIR`) when set,
@@ -34,24 +35,42 @@ class HashSignature:
     similar_to: str | None = None
 
 
+@dataclass
+class PatternCategory:
+    """A category of Layer 2 patterns: a logical grouping with shared severity/CWE."""
+
+    name: str
+    severity: str  # "info" | "low" | "medium" | "high" | "critical"
+    cwe: str | None
+    description: str
+    patterns: list[str] = field(default_factory=list)
+
+
 def _signatures_dir() -> Path:
     """Resolve where signature files live.
 
     Order of precedence:
-    1. NODEGUARD_SIGNATURES_DIR env var (used by tests).
-    2. Bundled location relative to repo root.
+    1. NODEGUARD_SIGNATURES_DIR env var (used by tests, allows overrides).
+    2. Wheel-bundled location (`nodeguard/_bundled_signatures/`) — populated by
+       hatch's force-include when building the wheel.
+    3. Repo-root `signatures/` directory — used during development install.
     """
     if env := os.environ.get("NODEGUARD_SIGNATURES_DIR"):
         return Path(env)
 
-    # Walk up from this file to find a sibling `signatures/` directory
+    # 2) Wheel-bundled location: sibling to the `data/` directory inside the
+    # installed package.
+    bundled = Path(__file__).resolve().parent.parent / "_bundled_signatures"
+    if bundled.is_dir():
+        return bundled
+
+    # 3) Repo-root walk-up for development installs.
     here = Path(__file__).resolve()
     for parent in [here.parent, *here.parents]:
         candidate = parent / "signatures"
         if candidate.is_dir():
             return candidate
 
-    # Fallback (e.g., installed wheel without bundled data)
     return Path.cwd() / "signatures"
 
 
@@ -119,3 +138,40 @@ def load_malicious_urls(path: Path | None = None) -> set[str]:
             urls.add(stripped)
 
     return urls
+
+
+def load_pattern_categories(path: Path | None = None) -> list[PatternCategory]:
+    """Load Layer 2 patterns grouped by category.
+
+    The patterns file is a JSON document with a `categories` mapping. Each
+    category has a `severity`, optional `cwe`, `description`, and a list of
+    `patterns` (literal substrings to search for via Aho-Corasick).
+
+    Args:
+        path: Optional explicit path. Defaults to bundled `patterns.json`.
+
+    Returns:
+        List of PatternCategory. Empty list if the file is missing.
+    """
+    if path is None:
+        path = _signatures_dir() / "patterns.json"
+
+    if not path.exists():
+        return []
+
+    with path.open(encoding="utf-8") as f:
+        data = json.load(f)
+
+    categories: list[PatternCategory] = []
+    for name, entry in data.get("categories", {}).items():
+        categories.append(
+            PatternCategory(
+                name=name,
+                severity=entry.get("severity", "medium"),
+                cwe=entry.get("cwe"),
+                description=entry.get("description", ""),
+                patterns=list(entry.get("patterns", [])),
+            )
+        )
+
+    return categories
