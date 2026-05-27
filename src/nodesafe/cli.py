@@ -95,7 +95,7 @@ def scan(
         # Print JSON to stdout for piping; nothing else on stdout.
         click.echo(report.to_json())
     else:
-        console.print(report.to_markdown())
+        _emit_markdown(report.to_markdown())
 
     # Exit code policy
     label = report.verdict.label
@@ -177,13 +177,38 @@ def _run_batch(
             )
         lines.append("")
         lines.append(f"Worst verdict across batch: **{worst_label.value}**")
-        console.print("\n".join(lines))
+        _emit_markdown("\n".join(lines))
 
     # Exit code policy applied to the worst verdict.
     if fail_on == "malicious" and worst_label == VerdictLabel.MALICIOUS:
         sys.exit(2)
     if fail_on == "suspicious" and worst_label in {VerdictLabel.SUSPICIOUS, VerdictLabel.MALICIOUS}:
         sys.exit(2 if worst_label == VerdictLabel.MALICIOUS else 1)
+
+
+def _emit_markdown(markdown: str) -> None:
+    """Emit markdown to stdout, using UTF-8 bytes when stdout is not a TTY.
+
+    Rich's `console.print` works great in an interactive terminal but on
+    Windows it falls back to a legacy renderer that re-encodes the buffer
+    in cp1252, which crashes on emoji like the verdict marker. When stdout
+    is redirected to a file or pipe we don't need Rich at all; the raw
+    markdown is the right output, and writing it as UTF-8 bytes bypasses
+    whatever encoding the OS picked for the destination file.
+    """
+    if sys.stdout.isatty():
+        console.print(markdown)
+        return
+    try:
+        sys.stdout.buffer.write(markdown.encode("utf-8"))
+        sys.stdout.buffer.write(b"\n")
+        sys.stdout.buffer.flush()
+    except (AttributeError, ValueError):
+        # Some test runners replace sys.stdout with a StringIO that has no
+        # `.buffer`. Fall back to a plain write; Rich's emoji rendering can
+        # still upset cp1252 there, but Click's runner captures Unicode fine.
+        sys.stdout.write(markdown + "\n")
+        sys.stdout.flush()
 
 
 @main.command()

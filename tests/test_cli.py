@@ -99,3 +99,22 @@ def test_batch_mode_empty_dir_warns(tmp_path: Path) -> None:
     result = runner.invoke(main, ["scan", str(empty), "--batch"])
     assert result.exit_code == 0
     assert "no subdirectories" in result.output.lower()
+
+
+def test_markdown_redirect_no_unicode_crash(tmp_path: Path, malicious_fixture: Path) -> None:
+    """When stdout is not a TTY (e.g. redirected to a file), the CLI must not
+    crash on the verdict emoji. Regression test for the v0.5.0 Windows
+    cp1252 issue.
+    """
+    runner = CliRunner()
+    result = runner.invoke(
+        main,
+        ["scan", str(malicious_fixture), "--format", "markdown"],
+    )
+    # Click's runner captures stdout as text; the important assertion is
+    # that scanning + rendering completed without raising.
+    assert result.exit_code in (0, 1, 2), f"Unexpected exit code {result.exit_code}"
+    assert result.exception is None or isinstance(result.exception, SystemExit), (
+        f"Markdown rendering raised: {result.exception!r}"
+    )
+    assert "Verdict" in result.output

@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-05-26
+
+### Fixed
+- **Windows redirect crash on `--format markdown`.** Rich's legacy
+  Windows renderer encodes the buffer in cp1252 when stdout is not a
+  TTY, which crashes on the verdict emoji (`UnicodeEncodeError: charmap
+  codec can't encode character '\U0001f534'`). The CLI now detects
+  non-TTY stdout and writes the markdown as UTF-8 bytes directly to
+  `sys.stdout.buffer`, bypassing Rich entirely when piping or
+  redirecting. Interactive terminal rendering is unchanged.
+
 ## [0.5.0] - 2026-05-26
 
 ### Added
