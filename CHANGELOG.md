@@ -7,6 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-05-26
+
+### Added
+- **Obfuscation detection in Layer 3.** A new module
+  (`src/nodesafe/layers/_obfuscation.py`) extends the AST analysis with
+  seven detectors that catch deliberately disguised code, regardless of
+  what the payload would have done. Each emits its own category so the
+  output stays inspectable.
+  - `code_obfuscation_chr_chain` (CRITICAL): `chr(N) + chr(N) + ...`
+    chains that reconstruct a dangerous keyword (`eval`, `exec`, `system`,
+    `subprocess`, `pickle`, etc.).
+  - `code_obfuscation_split_concat` (HIGH): the same idea built from
+    string pieces, e.g. `"e" + "v" + "a" + "l"`.
+  - `code_obfuscation_high_entropy` (MEDIUM): long string literals
+    (>= 40 chars) whose Shannon entropy is at least 4.5 bits/char, the
+    typical signature of a base64 / random-binary blob.
+  - `code_obfuscation_suspicious_ident` (LOW): identifier-name
+    heuristics (all-underscore names, underscore-prefixed consonant
+    runs, confusable-character salads like `_o0o`, `_l1l`). Common
+    short abbreviations (`cmd`, `tmp`, `ctx`, `idx`, etc.) are
+    explicitly allowed.
+  - `code_obfuscation_mixed_script` (CRITICAL): identifiers that mix
+    Unicode scripts (e.g. Cyrillic `е` U+0435 inside an otherwise-Latin
+    `eval`). Classic homoglyph attack vector.
+  - `code_obfuscation_decoder_chain` (HIGH): nested calls of two or
+    more known decoders in a single expression
+    (`zlib.decompress(base64.b64decode(...))`).
+  - `code_obfuscation_minified` (MEDIUM): file-level whitespace ratio
+    below 5% on files larger than 400 chars. Typical Python source sits
+    at 15-30%; deliberate minification of a sizeable file is suspicious.
+- **`nodesafe scan --batch`**: scan a parent directory and treat each
+  first-level subdirectory as a separate node. Emits a per-subdirectory
+  verdict plus an aggregate "worst verdict" line. JSON output emits an
+  array of per-node summaries. Designed for scanning a `custom_nodes/`
+  tree with many plugins at once.
+- `tests/fixtures/malicious/synthetic_obfuscation/` exercising every
+  obfuscation detector in inert constructs.
+- `tests/test_obfuscation.py` — 17 tests covering the pure detector
+  functions and their integration into L3.
+- 3 new CLI tests for `--batch` mode.
+
+### Changed
+- Layer 3 now emits both call-site findings (as before) and
+  obfuscation findings. Category prefix `code_obfuscation_*` makes them
+  filterable.
+
 ## [0.4.0] - 2026-05-25
 
 ### Added

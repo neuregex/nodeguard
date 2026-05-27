@@ -1,6 +1,6 @@
 [project]
 name = "nodesafe"
-version = "0.4.0"
+version = "0.5.0"
 description = "Security scanner for ComfyUI custom nodes and node-based workflow plugins"
 readme = "README.md"
 license = { text = "Apache-2.0" }
@@ -103,6 +103,10 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S"]            # No security checks in tests
 "tests/fixtures/**" = ["F", "E", "W", "B", "S", "RUF"]  # Fixtures can contain anything
+# The obfuscation module and its tests deliberately reference Cyrillic
+# characters to demonstrate and detect homoglyph attacks.
+"src/nodesafe/layers/_obfuscation.py" = ["RUF001", "RUF002", "RUF003"]
+"tests/test_obfuscation.py" = ["RUF001", "RUF002", "RUF003"]
 
 [tool.pytest.ini_options]
 minversion = "8.0"

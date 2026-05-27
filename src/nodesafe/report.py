@@ -154,7 +154,7 @@ def make_report(
     findings: list[Finding],
     started_at: datetime | None = None,
     duration_ms: int = 0,
-    scanner_version: str = "0.4.0",
+    scanner_version: str = "0.5.0",
 ) -> Report:
     """Aggregate findings into a final Report with computed verdict."""
     started_at = started_at or datetime.now(timezone.utc)

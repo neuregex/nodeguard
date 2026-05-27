@@ -48,7 +48,13 @@ def main() -> None:
 @click.option(
     "--no-llm",
     is_flag=True,
-    help="Disable Layer 8 (LLM) for this run. No-op in v0.1 (LLM not yet implemented).",
+    help="Disable Layer 8 (LLM) for this run. No-op until L8 ships.",
+)
+@click.option(
+    "--batch",
+    is_flag=True,
+    help="Treat TARGET as a parent directory; scan each first-level subdirectory "
+    "as a separate node and emit a per-subdirectory verdict.",
 )
 @click.option(
     "--config",
@@ -63,6 +69,7 @@ def scan(
     fail_on: str,
     layers: str | None,
     no_llm: bool,
+    batch: bool,
     config_path: Path | None,
 ) -> None:
     """Scan a plugin/node directory for malicious code."""
@@ -73,6 +80,10 @@ def scan(
         cfg.llm.enabled = False
 
     scanner = Scanner(config=cfg)
+
+    if batch:
+        _run_batch(scanner, target, output_format, fail_on)
+        return
 
     try:
         report = scanner.scan(target)
@@ -92,6 +103,87 @@ def scan(
         sys.exit(2)
     if fail_on == "suspicious" and label in {VerdictLabel.SUSPICIOUS, VerdictLabel.MALICIOUS}:
         sys.exit(2 if label == VerdictLabel.MALICIOUS else 1)
+
+
+def _run_batch(
+    scanner: Scanner,
+    target: Path,
+    output_format: str,
+    fail_on: str,
+) -> None:
+    """Scan every first-level subdirectory of `target` independently.
+
+    For each subdir we run a full scan and emit one summary line per node;
+    at the end we print an aggregate table (markdown) or a JSON array (json)
+    and exit with the worst severity across all subdirectories.
+    """
+    import json
+
+    if not target.exists() or not target.is_dir():
+        err_console.print(f"[red]Error:[/red] {target} is not a directory")
+        sys.exit(3)
+
+    subdirs = sorted(p for p in target.iterdir() if p.is_dir() and not p.name.startswith("."))
+    if not subdirs:
+        err_console.print(f"[yellow]Warning:[/yellow] no subdirectories found in {target}")
+        sys.exit(0)
+
+    reports = []
+    worst_label: VerdictLabel = VerdictLabel.CLEAN
+    severity_order = {
+        VerdictLabel.CLEAN: 0,
+        VerdictLabel.SUSPICIOUS: 1,
+        VerdictLabel.MALICIOUS: 2,
+        VerdictLabel.ERROR: 1,
+    }
+
+    for subdir in subdirs:
+        try:
+            r = scanner.scan(subdir)
+            reports.append((subdir.name, r))
+            if severity_order[r.verdict.label] > severity_order[worst_label]:
+                worst_label = r.verdict.label
+        except FileNotFoundError:
+            continue
+
+    if output_format == "json":
+        payload = [
+            {
+                "node": name,
+                "verdict": r.verdict.model_dump(mode="json"),
+                "recommendation": r.recommendation,
+                "findings_count": len(r.findings),
+            }
+            for name, r in reports
+        ]
+        click.echo(json.dumps(payload, indent=2))
+    else:
+        lines = [
+            f"# nodesafe batch scan — {target} ({len(reports)} nodes)",
+            "",
+            "| Node | Verdict | Score | Recommendation | Findings |",
+            "|------|---------|-------|----------------|----------|",
+        ]
+        emoji = {
+            VerdictLabel.CLEAN: "[green]clean[/green]",
+            VerdictLabel.SUSPICIOUS: "[yellow]suspicious[/yellow]",
+            VerdictLabel.MALICIOUS: "[red]malicious[/red]",
+            VerdictLabel.ERROR: "[red]error[/red]",
+        }
+        for name, r in reports:
+            lines.append(
+                f"| `{name}` | {emoji[r.verdict.label]} | "
+                f"{r.verdict.score:.2f} | `{r.recommendation}` | {len(r.findings)} |"
+            )
+        lines.append("")
+        lines.append(f"Worst verdict across batch: **{worst_label.value}**")
+        console.print("\n".join(lines))
+
+    # Exit code policy applied to the worst verdict.
+    if fail_on == "malicious" and worst_label == VerdictLabel.MALICIOUS:
+        sys.exit(2)
+    if fail_on == "suspicious" and worst_label in {VerdictLabel.SUSPICIOUS, VerdictLabel.MALICIOUS}:
+        sys.exit(2 if worst_label == VerdictLabel.MALICIOUS else 1)
 
 
 @main.command()

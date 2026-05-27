@@ -37,6 +37,10 @@ import time
 from pathlib import Path
 from typing import ClassVar
 
+from nodesafe.layers._obfuscation import (
+    OBFUSCATION_DETECTORS,
+    compute_whitespace_ratio,
+)
 from nodesafe.layers.base import Layer, LayerResult, NodeContext
 from nodesafe.report import Finding, Severity
 
@@ -69,8 +73,90 @@ class AstLayer(Layer):
             visitor.visit(tree)
             findings.extend(visitor.findings)
 
+            # Obfuscation detectors run on the same AST. Findings here have
+            # categories prefixed with ``code_obfuscation_*`` so they are easy
+            # to filter from the regular L3 output.
+            findings.extend(self._obfuscation_findings(path, context.root, source, tree))
+
         duration_ms = int((time.perf_counter() - start) * 1000)
         return LayerResult(layer_id=self.id, findings=findings, duration_ms=duration_ms)
+
+    _SEVERITY_BY_TAG: ClassVar[dict[str, Severity]] = {
+        "critical": Severity.CRITICAL,
+        "high": Severity.HIGH,
+        "medium": Severity.MEDIUM,
+        "low": Severity.LOW,
+        "info": Severity.INFO,
+    }
+
+    # Files with whitespace ratio below this AND length above the minimum are
+    # flagged as minified/obfuscated.
+    _MIN_FILE_LEN_FOR_WS_CHECK: ClassVar[int] = 400
+    _MIN_WS_RATIO: ClassVar[float] = 0.05
+
+    def _obfuscation_findings(
+        self,
+        path: Path,
+        root: Path,
+        source: str,
+        tree: ast.AST,
+    ) -> list[Finding]:
+        results: list[Finding] = []
+        try:
+            rel = str(path.relative_to(root))
+        except ValueError:
+            rel = str(path)
+
+        # 1) AST-based detectors.
+        for category, sev_tag, cwe, detector in OBFUSCATION_DETECTORS:
+            for line, snippet, message in detector(tree):
+                results.append(
+                    Finding(
+                        id=self._next_id(),
+                        layer=self.id,
+                        severity=self._SEVERITY_BY_TAG[sev_tag],
+                        category=category,
+                        title=snippet,
+                        file=rel,
+                        line=line,
+                        snippet=snippet,
+                        explanation=message,
+                        cwe=cwe,
+                    )
+                )
+
+        # 2) File-level whitespace ratio. Only flag files that are large enough
+        # to make minification deliberate (a one-line helper isn't suspicious).
+        if len(source) >= self._MIN_FILE_LEN_FOR_WS_CHECK:
+            ratio = compute_whitespace_ratio(source)
+            if ratio < self._MIN_WS_RATIO:
+                results.append(
+                    Finding(
+                        id=self._next_id(),
+                        layer=self.id,
+                        severity=Severity.MEDIUM,
+                        category="code_obfuscation_minified",
+                        title=f"Whitespace ratio {ratio:.3f} below threshold",
+                        file=rel,
+                        line=1,
+                        snippet=f"length={len(source)}, ws_ratio={ratio:.3f}",
+                        explanation=(
+                            f"File has whitespace ratio {ratio:.3f} (threshold "
+                            f"{self._MIN_WS_RATIO}). Typical Python source is "
+                            "0.15-0.30. A very low ratio in a sizeable file "
+                            "indicates deliberate minification, often a wrapper "
+                            "around an obfuscated payload."
+                        ),
+                        cwe="CWE-506",
+                    )
+                )
+
+        return results
+
+    @staticmethod
+    def _next_id() -> str:
+        _SecurityVisitor._counter += 1
+        return f"L3-obf-{_SecurityVisitor._counter:04d}"
 
 
 # Names that, when *called directly* (not just imported), are dangerous.
