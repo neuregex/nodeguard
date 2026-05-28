@@ -10,8 +10,6 @@
 
 `nodesafe` scans third-party plugins/nodes before you install them in node-based workflow tools, detecting malicious code with a cascading pipeline that combines static analysis, signature matching, machine learning, and optional semantic analysis with an LLM. Starting point: the ComfyUI ecosystem.
 
-> [5-second GIF of the scanner detecting a malicious node — placeholder until v0.1]
-
 ## Why this exists
 
 In **June 2024**, ComfyUI_LLMVISION stole browser credentials and crypto wallets from hundreds of users. In **April 2026**, a botnet compromised 1,000+ ComfyUI instances by auto-installing malicious nodes via the Manager. The custom_nodes ecosystem is large, fast-moving, and largely unverified.
@@ -40,21 +38,21 @@ A 9-layer cascading pipeline. Each layer more expensive than the previous. Most 
 | 0 | Hash matching against malware database | μs |
 | 1 | Bloom filter of malicious URLs | μs |
 | 2 | Aho-Corasick over dangerous patterns | ms |
-| 3 | AST analysis (optional Semgrep backend) | ms |
+| 3 | AST analysis + obfuscation detectors (chr-chain, split-concat, Shannon entropy, suspicious identifiers, Unicode homoglyph, nested decoder chains, file-level minification) | ms |
 | 4 | Typosquatting + OSV vulnerability check | ms |
-| 5 | ML classifier (Naive Bayes + XGBoost) | tens of ms |
+| 5 | Aggregate heuristic risk score (hand-calibrated; ML model pending dataset) | tens of ms |
 | 6 | Anomaly detection (Isolation Forest + Autoencoder) | tens of ms |
 | 7 | Semantic similarity (CodeBERT embeddings + FAISS) | hundreds of ms |
 | 8 | LLM review (optional, local-first via Ollama) | seconds |
 
-**Current state (v0.3.1):** Layers 0-4 functional and shipping on PyPI. 50 tests passing across Python 3.10–3.12 × Linux/macOS/Windows. Layers 5-8 in the M2-M4 roadmap.
+**Current state (v0.5.1):** Layers 0-5 functional and shipping on PyPI. 87 tests passing across Python 3.10–3.12 × Linux/macOS/Windows. Layer 3 includes 7 obfuscation detectors that catch char-code keyword construction, split-concat, high-entropy literals, suspicious identifier shapes, Unicode homoglyph attacks, nested decoder chains, and minified files. CLI supports `--batch` for scanning a parent directory with many nodes at once. Layers 6-8 in the M3-M4 roadmap.
 
 ## Features
 
 - ✓ **Pure static analysis** — never executes scanned code
 - ✓ **Zero telemetry by default** — this policy is immutable
 - ✓ **Works offline** (after the first signature update)
-- ✓ **Multiple output formats**: JSON, SARIF (GitHub Code Scanning), Markdown
+- ✓ **Multiple output formats**: JSON, Markdown (SARIF coming in v0.6 for GitHub Code Scanning integration)
 - ✓ **GitHub Action ready** — see the example workflow
 - ✓ **Pre-commit hook ready** — for CI/CD of custom_nodes repositories
 - ✓ **Local-first LLM analysis** — Ollama by default, cloud opt-in with BYO key
@@ -74,17 +72,20 @@ nodesafe scan /path/to/custom_node
 nodesafe scan /path/to/custom_node --format json
 ```
 
-### Integrate with GitHub Code Scanning (SARIF)
-
-```bash
-nodesafe scan custom_nodes/ --format sarif > nodesafe.sarif
-```
-
-### Only cheap layers (fast, no ML)
+### Only cheap layers (fast, no aggregate score)
 
 ```bash
 nodesafe scan /path/to/custom_node --layers 0,1,2,3
 ```
+
+### Batch mode (scan a whole `custom_nodes/` folder at once)
+
+```bash
+nodesafe scan ComfyUI/custom_nodes --batch
+```
+
+Emits a per-node verdict plus an aggregate "worst verdict" line. Use
+`--format json` to get an array of per-node summaries for tooling.
 
 ### Update signatures
 
@@ -142,11 +143,13 @@ enabled = false                     # ALWAYS false. Immutable policy.
 
 ## Roadmap
 
-- **v0.3.x (M1, shipped):** Layers 0-4 — hash matching, malicious URLs, Aho-Corasick patterns, AST analysis, typosquatting + OSV. Available now via `pip install nodesafe`.
-- **v0.5 (M2):** Layer 5 ML (Naive Bayes + XGBoost) + Semgrep backend + first public wave
-- **v1.0 (M3):** Layers 6-7 (anomaly detection + CodeBERT) + PR to ComfyUI-Manager + formal launch
-- **v1.5 (M4):** Layer 8 LLM (Ollama-first) + public threat report + consolidated community
-- **v2+ (Year 2):** `.nodesafe` standard portable to other node-based ecosystems
+- **v0.5.x (shipped):** Layers 0-5 with obfuscation detectors + batch mode. Available now via `pip install nodesafe`.
+- **v0.6 (next):** runtime-installation detector (catches nodes that pip-install or git-clone code at runtime, the April 2026 botnet vector) + SARIF output for GitHub Code Scanning.
+- **v0.7 (M3):** Layer 6 anomaly detection (Isolation Forest + autoencoder over the feature extractor) once enough labeled samples have been collected to seed a baseline.
+- **v0.9 (M3):** Layer 7 semantic similarity (CodeBERT embeddings + FAISS) for polymorphic variant matching.
+- **v1.0:** Layer 8 LLM contextual review (local-first via Ollama, cloud opt-in) + first PR to ComfyUI-Manager so scans run before any install by default.
+- **v1.5:** public threat report + consolidated community signature contributions.
+- **v2+ (Year 2):** `.nodesafe` standard portable to other node-based ecosystems (LangFlow, n8n, Flowise).
 
 Full plan in [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
