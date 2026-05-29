@@ -1,0 +1,13 @@
+{
+  "last_node_id": 5,
+  "last_link_id": 4,
+  "nodes": [
+    {"id": 1, "type": "CheckpointLoaderSimple", "widgets_values": ["sd_xl_base_1.0.safetensors"]},
+    {"id": 2, "type": "CLIPTextEncode", "widgets_values": ["a serene mountain lake at dawn, photorealistic"]},
+    {"id": 3, "type": "CLIPTextEncode", "widgets_values": ["blurry, watermark, signature"]},
+    {"id": 4, "type": "KSampler", "widgets_values": [42, "fixed", 20, 8.0, "euler", "normal", 1.0]},
+    {"id": 5, "type": "VAEDecode", "widgets_values": []}
+  ],
+  "links": [],
+  "version": 0.4
+}

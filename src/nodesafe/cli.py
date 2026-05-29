@@ -211,6 +211,60 @@ def _emit_markdown(markdown: str) -> None:
         sys.stdout.flush()
 
 
+@main.command(name="scan-workflow")
+@click.argument(
+    "target",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+)
+@click.option(
+    "--format",
+    "output_format",
+    type=click.Choice(["json", "markdown"]),
+    default="markdown",
+    help="Output format (json or markdown).",
+)
+@click.option(
+    "--fail-on",
+    type=click.Choice(["none", "suspicious", "malicious"]),
+    default="suspicious",
+    help="Exit non-zero if verdict reaches this severity.",
+)
+@click.option(
+    "--config",
+    "config_path",
+    type=click.Path(exists=True, path_type=Path),
+    default=None,
+    help="Path to a custom config TOML (reserved for future workflow-specific options).",
+)
+def scan_workflow(
+    target: Path,
+    output_format: str,
+    fail_on: str,
+    config_path: Path | None,
+) -> None:
+    """Scan a ComfyUI workflow file (JSON or PNG) for malicious content."""
+    from nodesafe.workflow import WorkflowParseError, WorkflowScanner
+
+    scanner = WorkflowScanner()
+
+    try:
+        report = scanner.scan(target)
+    except WorkflowParseError as exc:
+        err_console.print(f"[red]Error parsing workflow:[/red] {exc}")
+        sys.exit(3)
+
+    if output_format == "json":
+        click.echo(report.to_json())
+    else:
+        _emit_markdown(report.to_markdown())
+
+    label = report.verdict.label
+    if fail_on == "malicious" and label == VerdictLabel.MALICIOUS:
+        sys.exit(2)
+    if fail_on == "suspicious" and label in {VerdictLabel.SUSPICIOUS, VerdictLabel.MALICIOUS}:
+        sys.exit(2 if label == VerdictLabel.MALICIOUS else 1)
+
+
 @main.command()
 def update() -> None:
     """Update signature databases and ML models. (Stub in v0.1.)"""

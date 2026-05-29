@@ -11,7 +11,7 @@ from nodesafe.config import Config, load_config
 from nodesafe.report import Finding, Report, Verdict
 from nodesafe.scanner import Scanner
 
-__version__ = "0.5.1"
+__version__ = "0.6.0"
 
 __all__ = [
     "Config",
