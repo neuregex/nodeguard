@@ -7,6 +7,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-05-27
+
+### Added
+- **Workflow Auditor.** A new module (`src/nodesafe/workflow/`) extends
+  nodesafe to scan ComfyUI workflow files (JSON exports and PNG images
+  with workflow metadata embedded in `tEXt` / `zTXt` / `iTXt` chunks),
+  not just custom_node source code. Workflows ship more freely than
+  custom_nodes (Civitai, Reddit, Discord) and carry their own attack
+  surface: malicious widget values, embedded Python in `ExecutePython`
+  nodes, exfiltration URLs, and references to compromised custom_nodes.
+  Two analyzers ship in this release:
+  - **WL1 (malicious URL)** — every URL found in a widget value is
+    checked against the same `malicious_urls.txt` database used by
+    Layer 1.
+  - **WL2 (Aho-Corasick patterns)** — every string widget value is
+    scanned with the same automaton and `patterns.json` categories used
+    by Layer 2. A `code_execution` pattern inside a widget value carries
+    the same severity as one inside source code, because workflows do
+    execute those widget values at runtime.
+- **`nodesafe scan-workflow TARGET`** CLI subcommand. Accepts `.json`
+  (UI form or prompt form) and `.png` (workflow embedded in PNG
+  metadata). Same `--format`, `--fail-on`, `--config` flags as the
+  regular `scan` command.
+- PNG parsing uses stdlib `struct` + `zlib`. No Pillow dependency.
+- `src/nodesafe/workflow/models.py` with `Workflow` + `WorkflowNode`
+  dataclasses that normalize both ComfyUI workflow forms into a single
+  shape the analyzers consume.
+- `src/nodesafe/workflow/parser.py` reads JSON directly and PNGs by
+  walking PNG chunks looking for `workflow`, `prompt`, or `parameters`
+  keys.
+- `src/nodesafe/workflow/extractors.py` for widget-value text and URL
+  extraction with a permissive regex.
+- `tests/fixtures/benign/workflows/sdxl_basic.json` and
+  `tests/fixtures/malicious/workflows/synthetic_workflow_malicious.{json,png}`.
+- `tests/test_workflow.py` — 19 tests covering parser (UI form, prompt
+  form, PNG with `tEXt`, malformed inputs), extractors (string widget
+  iteration, URL regex), analyzers (WL1 / WL2 behaviour), scanner
+  end-to-end, and the CLI subcommand.
+
+### Why this matters
+Workflows are the highest-volume attack surface in the ComfyUI ecosystem
+and the least audited. A user installs a handful of custom_nodes but
+downloads dozens of workflows. A workflow with a Discord webhook in an
+HTTP node's widget value, or an obfuscated payload in an `ExecutePython`
+node, is functionally as dangerous as a malicious custom_node and ships
+through different channels (Civitai, Reddit threads, image hosts that
+preserve PNG metadata). Same signatures, same Finding model, new
+substrate.
+
 ## [0.5.1] - 2026-05-26
 
 ### Fixed
